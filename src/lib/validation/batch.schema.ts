@@ -24,12 +24,17 @@ export const createBatchSchema = z.object({
 });
 
 export const updateBatchSchema = z.object({
+  quantity_kg: z
+    .number()
+    .positive("Kuantitas ampas harus lebih besar dari 0")
+    .max(50000, "Kuantitas melebihi batas wajar")
+    .optional(),
   price_per_kg_idr: z
     .number()
     .int("Harga harus berupa bilangan bulat")
     .nonnegative("Harga tidak boleh negatif")
     .optional(),
-  description: z.string().max(500, "Deskripsi maksimal 500 karakter").optional(),
+  description: z.string().max(500, "Deskripsi maksimal 500 karakter").nullable().optional(),
 });
 
 export const listBatchesQuerySchema = z.object({

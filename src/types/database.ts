@@ -19,7 +19,7 @@ export type PaymentMode = "simulation";
 export type LedgerEntryType = "payment" | "release" | "refund" | "reversal";
 export type LedgerStatus = "posted" | "reversed";
 
-export interface ProfileRow {
+export type ProfileRow = {
   id: string;
   name: string;
   role: UserRole;
@@ -28,9 +28,9 @@ export interface ProfileRow {
   longitude: number | null;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface BatchRow {
+export type BatchRow = {
   id: string;
   factory_id: string;
   quantity_kg: number;
@@ -45,9 +45,9 @@ export interface BatchRow {
   status: BatchStatus;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface TransactionRow {
+export type TransactionRow = {
   id: string;
   batch_id: string;
   farmer_id: string;
@@ -62,9 +62,9 @@ export interface TransactionRow {
   created_at: string;
   updated_at: string;
   completed_at: string | null;
-}
+};
 
-export interface LedgerEntryRow {
+export type LedgerEntryRow = {
   id: string;
   transaction_id: string;
   account_profile_id: string;
@@ -73,9 +73,9 @@ export interface LedgerEntryRow {
   status: LedgerStatus;
   reference_key: string;
   created_at: string;
-}
+};
 
-export interface HandoverVerificationRow {
+export type HandoverVerificationRow = {
   id: string;
   transaction_id: string;
   pin_hash: string;
@@ -83,9 +83,9 @@ export interface HandoverVerificationRow {
   attempt_count: number;
   consumed_at: string | null;
   created_at: string;
-}
+};
 
-export interface ImpactLogRow {
+export type ImpactLogRow = {
   id: string;
   transaction_id: string;
   material_kg: number;
@@ -93,9 +93,9 @@ export interface ImpactLogRow {
   estimated_feed_savings_idr: number;
   methodology_version: string;
   created_at: string;
-}
+};
 
-export interface AuditLogRow {
+export type AuditLogRow = {
   id: string;
   actor_profile_id: string | null;
   action: string;
@@ -103,15 +103,16 @@ export interface AuditLogRow {
   entity_id: string | null;
   metadata: Record<string, unknown>;
   created_at: string;
-}
+};
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       profiles: {
         Row: ProfileRow;
         Insert: Omit<ProfileRow, "created_at" | "updated_at">;
         Update: Partial<Omit<ProfileRow, "id" | "created_at">>;
+        Relationships: [];
       };
       batches: {
         Row: BatchRow;
@@ -120,32 +121,41 @@ export interface Database {
           sold_kg?: number;
         };
         Update: Partial<Omit<BatchRow, "id" | "created_at">>;
+        Relationships: [];
       };
       transactions: {
         Row: TransactionRow;
         Insert: Omit<TransactionRow, "id" | "created_at" | "updated_at" | "completed_at">;
         Update: Partial<Omit<TransactionRow, "id" | "created_at">>;
+        Relationships: [];
       };
       ledger_entries: {
         Row: LedgerEntryRow;
         Insert: Omit<LedgerEntryRow, "id" | "created_at">;
         Update: Partial<Omit<LedgerEntryRow, "id" | "created_at">>;
+        Relationships: [];
       };
       handover_verifications: {
         Row: HandoverVerificationRow;
         Insert: Omit<HandoverVerificationRow, "id" | "created_at">;
         Update: Partial<Omit<HandoverVerificationRow, "id" | "created_at">>;
+        Relationships: [];
       };
       impact_logs: {
         Row: ImpactLogRow;
         Insert: Omit<ImpactLogRow, "id" | "created_at">;
         Update: Partial<Omit<ImpactLogRow, "id" | "created_at">>;
+        Relationships: [];
       };
       audit_logs: {
         Row: AuditLogRow;
         Insert: Omit<AuditLogRow, "id" | "created_at">;
         Update: Partial<Omit<AuditLogRow, "id" | "created_at">>;
+        Relationships: [];
       };
+    };
+    Views: {
+      [_ in never]: never;
     };
     Functions: {
       create_transaction_reservation: {
@@ -165,6 +175,12 @@ export interface Database {
         };
         Returns: TransactionRow;
       };
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
     };
   };
 }
