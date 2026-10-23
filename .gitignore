@@ -20,6 +20,11 @@
 .DS_Store
 *.pem
 
+# local agent/tooling folders
+.agents/
+.codex/
+.impeccable/
+
 # debug
 npm-debug.log*
 yarn-debug.log*

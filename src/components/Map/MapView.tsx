@@ -85,8 +85,8 @@ export const MapView: React.FC<MapViewProps> = ({
     const bg = isGreen ? "#059669" : "#d97706";
     const border = isSelected ? "#2563eb" : "#ffffff";
     const scale = isSelected ? "transform:scale(1.22); z-index: 1000;" : "transition:transform 0.2s;";
-    const ringShadow = isSelected 
-      ? "box-shadow: 0 0 0 4px rgba(37,99,235,0.4), 0 8px 18px rgba(0,0,0,0.35);" 
+    const ringShadow = isSelected
+      ? "box-shadow: 0 0 0 4px rgba(37,99,235,0.4), 0 8px 18px rgba(0,0,0,0.35);"
       : "box-shadow: 0 3px 10px rgba(0,0,0,0.25);";
 
     return L.divIcon({
@@ -168,14 +168,14 @@ export const MapView: React.FC<MapViewProps> = ({
         >
           <Popup className="custom-popup">
             <div className="p-3 text-slate-800">
-              <span className="text-xs font-semibold text-emerald-800 block">
+              <span className="text-[10px] font-semibold text-emerald-800 uppercase tracking-wider block">
                 Titik GPS Peternak
               </span>
               <h4 className="font-bold text-sm text-slate-900 mt-0.5">{USER_FARMER_LOCATION.name}</h4>
-              <p className="text-xs text-slate-600 mt-1">
+              <p className="text-[11px] text-slate-600 mt-1">
                 {USER_FARMER_LOCATION.address}
               </p>
-              <p className="text-xs text-slate-600 font-mono mt-1">
+              <p className="text-[10px] text-slate-600 font-mono mt-1">
                 Radius Radar: {USER_FARMER_LOCATION.maxRadiusKm} KM
               </p>
             </div>
@@ -201,47 +201,42 @@ export const MapView: React.FC<MapViewProps> = ({
               }}
             >
               <Popup className="custom-popup">
-                <div className="p-3 text-slate-800 min-w-[220px]">
-                  <div className="flex items-center justify-between mb-1.5 gap-2">
-                    <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-md border ${
-                      factory.activeBatch.freshnessZone === "green"
-                        ? "text-emerald-900 bg-emerald-50 border-emerald-200"
-                        : "text-amber-900 bg-amber-50 border-amber-200"
-                    }`}>
+                <div className="p-3 text-slate-800 min-w-[210px]">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">
                       {factory.activeBatch.freshnessZone === "green" ? "🟢 Segar Prima" : "🟡 Diskon 15%"}
                     </span>
-                    <span className="text-xs font-medium text-slate-600 shrink-0">
+                    <span className="text-[11px] font-semibold text-slate-600">
                       {formattedDistance} km
                     </span>
                   </div>
 
                   <h4 className="font-bold text-sm text-slate-900">{factory.name}</h4>
-                  <p className="text-xs text-slate-600 mt-0.5">
+                  <p className="text-[11px] text-slate-600 mt-0.5">
                     {factory.activeBatch.itemName}
                   </p>
 
-                  <div className="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-700">
-                    <span>Stok:</span>
+                  <div className="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                    <span className="text-slate-600">Stok:</span>
                     <span className="font-bold text-slate-900">
                       {factory.activeBatch.availableSacks} karung
                     </span>
                   </div>
 
-                  <div className="mt-1 flex items-center justify-between text-xs text-slate-700">
-                    <span>Harga:</span>
-                    <span className="font-bold text-emerald-800 font-mono">
+                  <div className="mt-1 flex items-center justify-between text-xs">
+                    <span className="text-slate-600">Harga:</span>
+                    <span className="font-bold text-emerald-700 font-mono">
                       Rp {factory.activeBatch.pricePerSackIdr.toLocaleString("id-ID")}
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 mt-3">
+                  <div className="grid grid-cols-2 gap-2 mt-3.5">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         onSelectFactory(factory);
                       }}
-                      aria-label={`Lihat detail ${factory.name}`}
-                      className="bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold py-2 rounded-lg text-xs transition-colors text-center border border-slate-200 min-h-[38px] flex items-center justify-center focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-hidden"
+                      className="apple-press min-h-[36px] bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold py-1.5 px-3 rounded-full text-xs transition-colors text-center border border-black/[0.05] focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
                     >
                       Detail
                     </button>
@@ -250,11 +245,10 @@ export const MapView: React.FC<MapViewProps> = ({
                         e.stopPropagation();
                         onOrderFactory(factory);
                       }}
-                      aria-label={`Pesan ampas dari ${factory.name}`}
-                      className="bg-emerald-700 hover:bg-emerald-800 text-white font-semibold py-2 rounded-lg text-xs transition-colors flex items-center justify-center gap-1.5 shadow-2xs min-h-[38px] focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-hidden active:scale-95"
+                      className="apple-press min-h-[36px] bg-emerald-700 hover:bg-emerald-800 text-white font-semibold py-1.5 px-3 rounded-full text-xs transition-colors flex items-center justify-center gap-1 shadow-[0_2px_6px_rgba(52,199,89,0.3)] focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
                     >
                       <ShieldCheck className="w-3.5 h-3.5" />
-                      <span>Pesan</span>
+                      Pesan
                     </button>
                   </div>
                 </div>

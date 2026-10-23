@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import { 
-  Compass, 
-  MapPin, 
+import {
+  Compass,
+  MapPin,
   Leaf
 } from "lucide-react";
 import { USER_FARMER_LOCATION } from "@/data/mockFactories";
@@ -142,8 +142,8 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           onClick={onToggleRadiusCircle}
           title="Toggle Radius Radar 15 KM"
           className={`shrink-0 flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-full border transition-colors ${
-            isRadiusCircleVisible 
-              ? "bg-green-50 border-green-200 text-green-700 font-semibold" 
+            isRadiusCircleVisible
+              ? "bg-green-50 border-green-200 text-green-700 font-semibold"
               : "bg-slate-100 border-slate-200 text-slate-500"
           }`}
         >
