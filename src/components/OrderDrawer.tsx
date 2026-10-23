@@ -123,19 +123,19 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
         </div>
 
         {/* Header */}
-        <div className="px-5 py-3 flex items-center justify-between bg-white/95 backdrop-blur-md sticky top-0 z-10 border-b border-black/[0.05]">
+        <div className="px-5 py-3.5 flex items-center justify-between bg-white sticky top-0 z-10 border-b border-[#DDE7E2]">
           <div>
-            <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-semibold mb-0.5">
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+            <div className="flex items-center gap-1.5 text-xs text-[#0A4D3C] font-semibold mb-0.5">
+              <ShieldCheck className="w-4 h-4 text-[#0A4D3C]" />
               <span>Checkout Aman Sirkula Escrow</span>
             </div>
-            <h3 className="font-extrabold text-slate-900 text-lg tracking-[-0.02em]">
+            <h3 className="font-extrabold text-[#04261C] text-lg tracking-tight">
               {factory.name}
             </h3>
           </div>
           <button
             onClick={onClose}
-            className="apple-press p-2 min-h-[40px] min-w-[40px] rounded-full bg-black/[0.04] hover:bg-black/[0.08] text-slate-600 transition-colors flex items-center justify-center focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
+            className="apple-press p-2 min-h-[44px] min-w-[44px] rounded-full bg-[#04261C]/[0.05] hover:bg-[#04261C]/[0.08] text-[#04261C] transition-colors flex items-center justify-center focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
             aria-label="Tutup checkout"
           >
             <X className="w-4 h-4" />
@@ -143,45 +143,45 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
         </div>
 
         {/* Scrollable Content */}
-        <div className="p-5 space-y-4 overflow-y-auto bg-slate-50/60">
+        <div className="p-5 space-y-4 overflow-y-auto bg-[#F4F8F5]">
           {/* Freshness SLA Notice */}
-          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-3.5 flex items-start gap-3">
-            <Clock className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+          <div className="bg-white border border-[#DDE7E2] rounded-2xl p-4 flex items-start gap-3 shadow-2xs">
+            <Clock className="w-4 h-4 text-[#0A4D3C] mt-0.5 shrink-0" />
             <div className="text-xs">
-              <p className="font-bold text-emerald-950">
+              <p className="font-bold text-[#04261C]">
                 Jaminan Kesegaran SLA 12 Jam
               </p>
-              <p className="text-emerald-800/80 text-[11px] mt-0.5 leading-relaxed">
+              <p className="text-[#4A6359] text-xs mt-1 leading-relaxed">
                 Ampas tahu baru dimasak &amp; dipres subuh. Jarak antar hanya{" "}
-                <strong className="text-emerald-950">{formattedDistance} km</strong>{" "}
-                (~{Math.round(distance * 3)} menit), aman sebelum asam.
+                <strong className="text-[#04261C]">{formattedDistance} km</strong>{" "}
+                (~{Math.round(distance * 3)} menit), aman sebelum fermentasi asam.
               </p>
             </div>
           </div>
 
-          {/* iOS Stepper Card: Sacks Counter */}
-          <div className="bg-white border border-black/[0.06] rounded-2xl p-4 shadow-2xs space-y-3">
+          {/* Stepper Card: Sacks Counter */}
+          <div className="bg-white border border-[#DDE7E2] rounded-2xl p-4 shadow-2xs space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <label className="text-xs font-bold text-slate-900 block">
+                <label className="text-xs font-bold text-[#04261C] block">
                   Jumlah Karung Dipesan
                 </label>
-                <span className="text-[11px] text-slate-600">
+                <span className="text-xs text-[#4A6359]">
                   1 karung = {factory.activeBatch.weightPerSackKg} kg ampas segar
                 </span>
               </div>
 
-              {/* Apple Stepper Capsule */}
-              <div className="inline-flex items-center gap-3 bg-slate-100 p-1 rounded-full border border-black/[0.04]">
+              {/* Stepper Capsule */}
+              <div className="inline-flex items-center gap-3 bg-[#F4F8F5] p-1.5 rounded-full border border-[#DDE7E2]">
                 <button
                   type="button"
                   onClick={() => setSacks((prev) => Math.max(1, prev - 1))}
-                  className="apple-press w-8 h-8 rounded-full bg-white shadow-2xs hover:bg-slate-50 text-slate-800 font-bold flex items-center justify-center transition-transform active:scale-90 focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
+                  className="apple-press w-9 h-9 rounded-full bg-white shadow-2xs hover:bg-[#F2F7F4] text-[#04261C] font-bold flex items-center justify-center transition-transform active:scale-90 focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2 border border-[#DDE7E2]"
                   aria-label="Kurangi karung"
                 >
-                  <Minus className="w-3.5 h-3.5" />
+                  <Minus className="w-4 h-4" />
                 </button>
-                <span className="font-extrabold text-slate-900 text-base min-w-[28px] text-center font-mono">
+                <span className="font-extrabold text-[#04261C] text-base min-w-[28px] text-center font-mono">
                   {sacks}
                 </span>
                 <button
@@ -189,23 +189,23 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
                   onClick={() =>
                     setSacks((prev) => Math.min(factory.activeBatch.availableSacks, prev + 1))
                   }
-                  className="apple-press w-8 h-8 rounded-full bg-emerald-700 text-white shadow-[0_2px_6px_rgba(52,199,89,0.3)] hover:bg-emerald-800 font-bold flex items-center justify-center transition-transform active:scale-90 focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
+                  className="apple-press w-9 h-9 rounded-full bg-[#0A4D3C] text-white shadow-[0_2px_8px_rgba(10,77,60,0.3)] hover:bg-[#063125] font-bold flex items-center justify-center transition-transform active:scale-90 focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
                   aria-label="Tambah karung"
                 >
-                  <Plus className="w-3.5 h-3.5" />
+                  <Plus className="w-4 h-4" />
                 </button>
               </div>
             </div>
 
-            <div className="flex items-center justify-between pt-2.5 border-t border-black/[0.04] text-xs">
-              <span className="text-slate-600 font-medium">Total Bobot Pakan:</span>
-              <span className="font-bold text-slate-900 font-mono">{totalKg} kg</span>
+            <div className="flex items-center justify-between pt-2.5 border-t border-[#DDE7E2] text-xs">
+              <span className="text-[#4A6359] font-medium">Total Bobot Pakan:</span>
+              <span className="font-bold text-[#04261C] font-mono">{totalKg} kg</span>
             </div>
           </div>
 
-          {/* Apple Segmented Delivery Option Selector */}
+          {/* Delivery Option Selector */}
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-slate-700 block">
+            <label className="text-xs font-semibold text-[#04261C] block">
               Metode Pengambilan
             </label>
             <div className="grid grid-cols-2 gap-2.5">
@@ -213,24 +213,24 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
               <button
                 type="button"
                 onClick={() => setDeliveryMethod("delivery")}
-                className={`apple-press p-3.5 rounded-2xl border text-left flex flex-col justify-between transition-all relative focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2 ${
+                className={`apple-press p-3.5 rounded-2xl border text-left flex flex-col justify-between transition-all relative focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2 ${
                   deliveryMethod === "delivery"
-                    ? "bg-white border-emerald-500 ring-2 ring-emerald-500/20 shadow-xs"
-                    : "bg-white/80 border-black/[0.06] hover:border-black/[0.12]"
+                    ? "bg-[#F2F7F4] border-2 border-[#0A4D3C] shadow-xs"
+                    : "bg-white border-[#DDE7E2] hover:border-[#CBDCD2]"
                 }`}
               >
                 {deliveryMethod === "delivery" && (
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 absolute top-3 right-3" />
+                  <CheckCircle2 className="w-4 h-4 text-[#0A4D3C] absolute top-3 right-3" />
                 )}
                 <div className="flex items-center gap-1.5 mb-2">
-                  <Truck className={`w-4 h-4 ${deliveryMethod === "delivery" ? "text-emerald-600" : "text-slate-500"}`} />
-                  <span className="text-[10px] font-semibold text-emerald-800">
+                  <Truck className={`w-4 h-4 ${deliveryMethod === "delivery" ? "text-[#0A4D3C]" : "text-[#4A6359]"}`} />
+                  <span className="text-xs font-semibold text-[#0A4D3C]">
                     Rekomendasi
                   </span>
                 </div>
                 <div>
-                  <span className="text-xs font-bold block text-slate-900">Antar Kurir Re-Flow</span>
-                  <span className="text-[11px] text-slate-600 block mt-0.5">
+                  <span className="text-xs font-bold block text-[#04261C]">Antar Kurir Re-Flow</span>
+                  <span className="text-xs text-[#4A6359] block mt-0.5">
                     Rp {Math.round(5000 + distance * 3000).toLocaleString("id-ID")} • Cepat
                   </span>
                 </div>
@@ -240,24 +240,24 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
               <button
                 type="button"
                 onClick={() => setDeliveryMethod("pickup")}
-                className={`apple-press p-3.5 rounded-2xl border text-left flex flex-col justify-between transition-all relative focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2 ${
+                className={`apple-press p-3.5 rounded-2xl border text-left flex flex-col justify-between transition-all relative focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2 ${
                   deliveryMethod === "pickup"
-                    ? "bg-white border-emerald-500 ring-2 ring-emerald-500/20 shadow-xs"
-                    : "bg-white/80 border-black/[0.06] hover:border-black/[0.12]"
+                    ? "bg-[#F2F7F4] border-2 border-[#0A4D3C] shadow-xs"
+                    : "bg-white border-[#DDE7E2] hover:border-[#CBDCD2]"
                 }`}
               >
                 {deliveryMethod === "pickup" && (
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 absolute top-3 right-3" />
+                  <CheckCircle2 className="w-4 h-4 text-[#0A4D3C] absolute top-3 right-3" />
                 )}
                 <div className="flex items-center gap-1.5 mb-2">
-                  <Store className={`w-4 h-4 ${deliveryMethod === "pickup" ? "text-emerald-600" : "text-slate-500"}`} />
-                  <span className="text-[10px] font-medium text-slate-600">
+                  <Store className={`w-4 h-4 ${deliveryMethod === "pickup" ? "text-[#0A4D3C]" : "text-[#4A6359]"}`} />
+                  <span className="text-xs font-medium text-[#4A6359]">
                     Mandiri
                   </span>
                 </div>
                 <div>
-                  <span className="text-xs font-bold block text-slate-900">Ambil Mandiri</span>
-                  <span className="text-[11px] text-slate-600 block mt-0.5">
+                  <span className="text-xs font-bold block text-[#04261C]">Ambil Mandiri</span>
+                  <span className="text-xs text-[#4A6359] block mt-0.5">
                     Gratis ongkir ke pabrik
                   </span>
                 </div>
@@ -266,14 +266,14 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
           </div>
 
           {/* Escrow Guarantee Callout */}
-          <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-3.5 space-y-2 text-xs">
-            <div className="flex items-center gap-1.5 text-blue-800 font-bold">
-              <Lock className="w-3.5 h-3.5 text-blue-600" />
+          <div className="bg-white border border-[#DDE7E2] rounded-2xl p-4 space-y-2 text-xs shadow-2xs">
+            <div className="flex items-center gap-1.5 text-[#0A4D3C] font-bold">
+              <Lock className="w-4 h-4 text-[#0A4D3C]" />
               <span>Proteksi Rekening Bersama (Escrow)</span>
             </div>
-            <ul className="text-[11px] text-blue-900/80 space-y-1 leading-relaxed list-disc list-inside">
+            <ul className="text-xs text-[#4A6359] space-y-1.5 leading-relaxed list-disc list-inside">
               <li>
-                Dana <strong className="text-blue-950 font-bold">ditahan aman di Escrow</strong> hingga ampas tiba.
+                Dana <strong className="text-[#04261C] font-bold">ditahan aman di Escrow</strong> hingga ampas tiba.
               </li>
               <li>
                 Periksa suhu hangat &amp; aroma sebelum membagikan QR / PIN ke kurir.
@@ -282,52 +282,52 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
           </div>
 
           {/* SDG Impact Pill */}
-          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3 flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2">
-              <Leaf className="w-4 h-4 text-emerald-600" />
+          <div className="bg-[#F2F7F4] border border-[#DDE7E2] rounded-2xl p-3.5 flex items-center justify-between text-xs">
+            <div className="flex items-center gap-2.5">
+              <Leaf className="w-4 h-4 text-[#0A4D3C] shrink-0" />
               <div>
-                <span className="text-[11px] text-emerald-950 font-bold block">
+                <span className="text-xs text-[#04261C] font-bold block">
                   Kontribusi SDG 12 &amp; 13
                 </span>
-                <span className="text-[10px] text-emerald-700">
+                <span className="text-xs text-[#4A6359]">
                   Cegah {co2eSaved} kg CO2e • Hemat pakan ~Rp {feedSavings.toLocaleString("id-ID")}
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Apple iOS Grouped Summary Table */}
-          <div className="bg-white border border-black/[0.06] rounded-2xl p-4 space-y-2 text-xs shadow-2xs">
-            <div className="flex items-center justify-between text-slate-600">
+          {/* Summary Table */}
+          <div className="bg-white border border-[#DDE7E2] rounded-2xl p-4 space-y-2.5 text-xs shadow-2xs">
+            <div className="flex items-center justify-between text-[#4A6359]">
               <span>Subtotal ({sacks} karung × Rp {factory.activeBatch.pricePerSackIdr.toLocaleString("id-ID")})</span>
-              <span className="text-slate-800 font-mono">Rp {subtotal.toLocaleString("id-ID")}</span>
+              <span className="text-[#04261C] font-mono font-medium">Rp {subtotal.toLocaleString("id-ID")}</span>
             </div>
-            <div className="flex items-center justify-between text-slate-600">
+            <div className="flex items-center justify-between text-[#4A6359]">
               <span>Ongkir Jarak ({formattedDistance} km)</span>
-              <span className="text-slate-800 font-mono">
+              <span className="text-[#04261C] font-mono font-medium">
                 {shippingFee === 0 ? "Gratis" : `Rp ${shippingFee.toLocaleString("id-ID")}`}
               </span>
             </div>
-            <div className="flex items-center justify-between text-slate-600">
+            <div className="flex items-center justify-between text-[#4A6359]">
               <span>Biaya Layanan Escrow &amp; QR</span>
-              <span className="text-slate-800 font-mono">Rp {platformFee.toLocaleString("id-ID")}</span>
+              <span className="text-[#04261C] font-mono font-medium">Rp {platformFee.toLocaleString("id-ID")}</span>
             </div>
-            <div className="pt-2.5 border-t border-black/[0.05] flex items-center justify-between text-sm font-extrabold text-slate-900">
+            <div className="pt-2.5 border-t border-[#DDE7E2] flex items-center justify-between text-sm font-extrabold text-[#04261C]">
               <span>Total Pembayaran</span>
-              <span className="text-emerald-700 text-lg font-mono tracking-tight">
+              <span className="text-[#0A4D3C] text-lg font-mono tracking-tight">
                 Rp {totalAmount.toLocaleString("id-ID")}
               </span>
             </div>
           </div>
         </div>
 
-        {/* Apple Pay Style Primary CTA */}
-        <div className="p-4 px-5 border-t border-black/[0.06] bg-white sticky bottom-0 z-10">
+        {/* Primary CTA */}
+        <div className="p-4 px-5 border-t border-[#DDE7E2] bg-white sticky bottom-0 z-10">
           <button
             type="button"
             disabled={isSubmitting}
             onClick={handleConfirmOrder}
-            className="apple-press w-full min-h-[48px] bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-4 px-6 rounded-full text-sm sm:text-base transition-all flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50 shadow-[0_6px_20px_rgba(52,199,89,0.35)] focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
+            className="apple-press w-full min-h-[48px] bg-[#0A4D3C] hover:bg-[#063125] text-white font-bold py-3.5 px-6 rounded-full text-sm sm:text-base transition-all flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50 shadow-[0_4px_16px_rgba(10,77,60,0.3)] focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
           >
             {isSubmitting ? (
               <span className="flex items-center gap-2">

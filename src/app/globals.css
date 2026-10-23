@@ -5,21 +5,22 @@
 @tailwind utilities;
 
 :root {
-  --background: #fbfbfd;
-  --foreground: #1d1d1f;
+  --background: #ffffff;
+  --foreground: #04261C;
   --surface: #ffffff;
-  --surface-secondary: #f5f5f7;
-  --surface-tertiary: #e8e8ed;
-  --ink: #1d1d1f;
-  --ink-secondary: #6e6e73;
-  --ink-tertiary: #86868b;
-  --line: rgba(0, 0, 0, 0.08);
-  --line-strong: rgba(0, 0, 0, 0.14);
-  --accent-green: #34c759;
-  --accent-green-dark: #28cd41;
+  --surface-secondary: #f4f8f5;
+  --surface-tertiary: #e8f0ec;
+  --ink: #04261C;
+  --ink-secondary: #4A6359;
+  --ink-tertiary: #6E857B;
+  --line: rgba(4, 38, 28, 0.08);
+  --line-strong: rgba(4, 38, 28, 0.15);
+  --accent-green: #0A4D3C;
+  --accent-green-dark: #063125;
+  --accent-green-light: #106950;
   --accent-blue: #0071e3;
-  --accent-amber: #ff9f0a;
-  --accent-red: #ff3b30;
+  --accent-amber: #b45309;
+  --accent-red: #dc2626;
   
   /* Apple standard spring easing */
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
@@ -35,35 +36,33 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-sans), "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   overflow-x: hidden;
   -webkit-tap-highlight-color: transparent;
   letter-spacing: -0.01em;
 }
 
-/* Apple Frosted Glass Materials (§12) */
+/* Premium Green Glass & Surfaces */
 .apple-glass {
-  background: rgba(255, 255, 255, 0.78);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border-top: 1px solid rgba(255, 255, 255, 0.85);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(4, 38, 28, 0.08);
+  box-shadow: 0 12px 32px -4px rgba(4, 38, 28, 0.08), 0 2px 6px rgba(4, 38, 28, 0.03);
 }
 
 .apple-glass-card {
-  background: rgba(255, 255, 255, 0.86);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
+  background: #ffffff;
+  border: 1px solid rgba(4, 38, 28, 0.08);
+  box-shadow: 0 4px 16px rgba(4, 38, 28, 0.04), 0 1px 3px rgba(4, 38, 28, 0.02);
 }
 
 .apple-glass-pill {
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(4, 38, 28, 0.1);
+  box-shadow: 0 4px 16px rgba(4, 38, 28, 0.06);
 }
 
 /* Apple Press Response - instantaneous 100ms (§1) */

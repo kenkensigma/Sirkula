@@ -107,7 +107,7 @@ export default function Home() {
   };
 
   return (
-    <div className="h-screen w-screen bg-[#fbfbfd] text-slate-900 flex flex-col relative overflow-hidden select-none">
+    <div className="h-screen w-screen bg-white text-[#04261C] flex flex-col relative overflow-hidden select-none">
       {/* Apple Dynamic Island Floating Appbar */}
       <FloatingAppbar
         isFactoryListOpen={isFactoryListOpen}
@@ -126,49 +126,48 @@ export default function Home() {
 
       {/* Tab: Radar Peta */}
       {activeTab === "map" && (
-        <main className="relative flex-1 w-full h-full overflow-hidden">
-          <div className="absolute inset-0 w-full h-full z-0">
-            <FactoryMap
-              factories={filteredFactories}
-              selectedFactory={selectedFactory}
-              onSelectFactory={(fac) => {
-                setSelectedFactory(fac);
-                setIsFactoryListOpen(true);
-              }}
-              onOrderFactory={(fac) => setOrderModalFactory(fac)}
-              isRadiusCircleVisible={isRadiusCircleVisible}
-            />
-          </div>
+        <>
+          <main className="relative flex-1 w-full h-full overflow-hidden">
+            <div className="absolute inset-0 w-full h-full z-0">
+              <FactoryMap
+                factories={filteredFactories}
+                selectedFactory={selectedFactory}
+                onSelectFactory={(fac) => {
+                  setSelectedFactory(fac);
+                  setIsFactoryListOpen(true);
+                }}
+                onOrderFactory={(fac) => setOrderModalFactory(fac)}
+                isRadiusCircleVisible={isRadiusCircleVisible}
+              />
+            </div>
 
-          {/* Apple Maps Style GPS Re-Center Floating Button */}
-          <button
-            onClick={() => setSelectedFactory(null)}
-            className="apple-press absolute bottom-20 right-4 z-20 w-11 h-11 rounded-full apple-glass-pill flex items-center justify-center text-slate-800 shadow-[0_4px_16px_rgba(0,0,0,0.1)] hover:bg-white"
-            title="Pusatkan Radar ke GPS"
-            aria-label="Pusatkan Radar ke GPS"
-          >
-            <Navigation className="w-5 h-5 text-emerald-600" />
-          </button>
-
-          {/* Reopen Sheet Capsule Button */}
-          {!isFactoryListOpen && (
+            {/* Apple Maps Style GPS Re-Center Floating Button */}
             <button
-              onClick={() => setIsFactoryListOpen(true)}
-              className="apple-press absolute bottom-20 left-4 z-20 apple-glass-pill text-slate-800 px-4 py-2.5 rounded-full shadow-[0_4px_16px_rgba(0,0,0,0.1)] text-xs font-bold flex items-center gap-2 hover:bg-white"
+              onClick={() => setSelectedFactory(null)}
+              className="apple-press absolute bottom-20 right-4 z-20 w-11 h-11 rounded-full bg-white/95 backdrop-blur-md border border-[#DDE7E2] flex items-center justify-center text-[#04261C] shadow-[0_4px_16px_rgba(4,38,28,0.1)] hover:bg-[#F2F7F4] focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
+              title="Pusatkan Radar ke GPS"
+              aria-label="Pusatkan Radar ke GPS"
             >
-              <Layers className="w-4 h-4 text-emerald-600" />
-              <span>{selectedFactory ? selectedFactory.name : `Pabrik (${filteredFactories.length})`}</span>
+              <Navigation className="w-5 h-5 text-[#0A4D3C]" />
             </button>
-          )}
 
-          {/* Apple Sheet: Factory List / Detail Panel */}
+            {/* Reopen Sheet Capsule Button */}
+            {!isFactoryListOpen && (
+              <button
+                onClick={() => setIsFactoryListOpen(true)}
+                className="apple-press absolute bottom-20 left-4 z-20 bg-white/95 backdrop-blur-md border border-[#DDE7E2] text-[#04261C] px-4 py-2.5 rounded-full shadow-[0_4px_16px_rgba(4,38,28,0.1)] text-xs font-bold flex items-center gap-2 hover:bg-[#F2F7F4] focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
+              >
+                <Layers className="w-4 h-4 text-[#0A4D3C]" />
+                <span>{selectedFactory ? selectedFactory.name : `Pabrik (${filteredFactories.length})`}</span>
+              </button>
+            )}
+          </main>
+
+          {/* Sheet: Factory List / Detail Panel (Placed outside main to prevent overflow clipping) */}
           {isFactoryListOpen && (
-            <div
-              className={`
-                fixed inset-x-0 bottom-12 max-h-[72vh] rounded-t-[32px]
-                md:fixed md:top-20 md:left-5 md:right-auto md:bottom-20 md:w-[410px] md:max-h-[calc(100vh-160px)] md:rounded-[28px]
-                z-30 apple-glass overflow-hidden flex flex-col transition-all duration-300
-              `}
+            <aside
+              aria-label="Panel Pabrik"
+              className="fixed inset-x-0 bottom-14 max-h-[72vh] rounded-t-[32px] md:top-20 md:left-6 md:right-auto md:bottom-20 md:w-[420px] md:max-h-[calc(100vh-160px)] md:rounded-[28px] z-30 bg-white/95 backdrop-blur-xl border border-[#DDE7E2] shadow-[0_16px_48px_rgba(4,38,28,0.12)] overflow-hidden flex flex-col transition-all duration-300"
             >
               {selectedFactory ? (
                 <FactoryDetailPanel
@@ -179,24 +178,24 @@ export default function Home() {
                 />
               ) : (
                 <>
-                  {/* Apple Sheet Grabber */}
+                  {/* Sheet Grabber */}
                   <div className="pt-2.5 pb-1 bg-transparent shrink-0">
                     <div className="apple-sheet-handle" />
                   </div>
 
                   {/* Panel Header */}
-                  <div className="p-3.5 px-5 flex items-center justify-between shrink-0 border-b border-black/[0.05] bg-white/70 backdrop-blur-md">
+                  <div className="p-3.5 px-5 flex items-center justify-between shrink-0 border-b border-[#E8F0EC] bg-[#F7FAF8]">
                     <div>
-                      <h3 className="font-extrabold text-base text-slate-900 tracking-[-0.02em]">
+                      <h3 className="font-bold text-base text-[#04261C] tracking-tight">
                         Pabrik Ampas Tahu
                       </h3>
-                      <p className="text-[11px] text-slate-600 font-medium">
+                      <p className="text-xs text-[#4A6359] font-medium mt-0.5">
                         {filteredFactories.length} titik produsen, radius 15 km
                       </p>
                     </div>
                     <button
                       onClick={() => setIsFactoryListOpen(false)}
-                      className="apple-press p-2 rounded-full bg-black/[0.04] hover:bg-black/[0.08] text-slate-500 transition-colors"
+                      className="apple-press p-2 min-h-[40px] min-w-[40px] rounded-full bg-[#E8F0EC] hover:bg-[#DDE7E2] text-[#04261C] transition-colors flex items-center justify-center focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
                       title="Tutup Panel"
                       aria-label="Tutup Panel"
                     >
@@ -207,7 +206,7 @@ export default function Home() {
                   {/* Panel List */}
                   <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2.5">
                     {filteredFactories.length === 0 ? (
-                      <div className="p-10 text-center text-slate-600 text-sm">
+                      <div className="p-10 text-center text-[#4A6359] text-sm">
                         Tidak ada pabrik yang sesuai filter radar.
                       </div>
                     ) : (
@@ -224,22 +223,22 @@ export default function Home() {
                   </div>
                 </>
               )}
-            </div>
+            </aside>
           )}
-        </main>
+        </>
       )}
 
-      {/* Tab: Katalog (Apple App Store Style) */}
+      {/* Tab: Katalog */}
       {activeTab === "catalog" && (
         <main className="flex-1 overflow-y-auto pt-24 pb-20 px-4 sm:px-6 max-w-3xl mx-auto w-full">
           <div className="mb-5">
-            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full inline-block mb-1.5">
+            <span className="text-xs font-semibold text-[#0A4D3C] bg-[#F2F7F4] border border-[#DDE7E2] px-2.5 py-0.5 rounded-full inline-block mb-1.5">
               Live Stock
             </span>
-            <h2 className="text-2xl font-black text-slate-900 tracking-[-0.03em]">
+            <h2 className="text-2xl font-extrabold text-[#04261C] tracking-tight">
               Katalog Ampas Tahu
             </h2>
-            <p className="text-xs text-slate-600 mt-0.5">
+            <p className="text-xs text-[#4A6359] mt-0.5">
               Urutan berdasarkan waktu pres terhangat dan jarak tempuh terdekat
             </p>
           </div>
@@ -262,33 +261,33 @@ export default function Home() {
         </main>
       )}
 
-      {/* Tab: Escrow (Apple Wallet Passes Style) */}
+      {/* Tab: Escrow */}
       {activeTab === "escrow" && (
         <main className="flex-1 overflow-y-auto pt-24 pb-20 px-4 sm:px-6 max-w-2xl mx-auto w-full">
           <div className="mb-5">
-            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full inline-block mb-1.5">
+            <span className="text-xs font-semibold text-[#0A4D3C] bg-[#F2F7F4] border border-[#DDE7E2] px-2.5 py-0.5 rounded-full inline-block mb-1.5">
               Rekening Bersama
             </span>
-            <h2 className="text-2xl font-black text-slate-900 tracking-[-0.03em]">
+            <h2 className="text-2xl font-extrabold text-[#04261C] tracking-tight">
               Tiket &amp; Verifikasi Escrow
             </h2>
-            <p className="text-xs text-slate-600 mt-0.5">
+            <p className="text-xs text-[#4A6359] mt-0.5">
               Tunjukkan QR Code atau 6 Digit PIN ke kurir saat ampas tiba segar
             </p>
           </div>
 
           {orders.length === 0 ? (
-            <div className="text-center py-20 px-4 rounded-[28px] border border-black/[0.05] bg-white space-y-3 shadow-2xs">
-              <div className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
+            <div className="text-center py-20 px-4 rounded-[28px] border border-[#DDE7E2] bg-white space-y-3 shadow-2xs">
+              <div className="w-14 h-14 rounded-full bg-[#F2F7F4] flex items-center justify-center mx-auto text-[#0A4D3C]">
                 <ShieldCheck className="w-7 h-7" />
               </div>
-              <h3 className="font-bold text-slate-800 text-base">Belum Ada Transaksi</h3>
-              <p className="text-xs text-slate-600 max-w-xs mx-auto leading-relaxed">
+              <h3 className="font-bold text-[#04261C] text-base">Belum Ada Transaksi</h3>
+              <p className="text-xs text-[#4A6359] max-w-xs mx-auto leading-relaxed">
                 Pilih pabrik tahu di peta atau katalog untuk mengunci stok ampas segar di Rekening Bersama.
               </p>
               <button
                 onClick={() => setActiveTab("map")}
-                className="apple-press inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-full text-xs shadow-xs min-h-[44px] focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
+                className="apple-press inline-flex items-center gap-1.5 bg-[#0A4D3C] hover:bg-[#063125] text-white font-bold py-2.5 px-5 rounded-full text-xs shadow-xs min-h-[44px] focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
               >
                 <span>Buka Radar Peta</span>
               </button>
@@ -302,33 +301,33 @@ export default function Home() {
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveOrderForModal(ord); } }}
-                  className="apple-press bg-white border border-black/[0.06] rounded-[24px] p-4 cursor-pointer hover:border-emerald-500/40 shadow-2xs transition-all relative overflow-hidden group focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
+                  className="apple-press bg-white border border-[#DDE7E2] rounded-[24px] p-4 cursor-pointer hover:border-[#0A4D3C] shadow-2xs transition-all relative overflow-hidden group focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-[11px] font-mono font-bold text-slate-600">
+                    <span className="text-xs font-mono font-bold text-[#4A6359]">
                       {ord.id}
                     </span>
                     <span
-                      className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
+                      className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${
                         ord.status === "DELIVERED_SETTLED"
-                          ? "text-slate-500 bg-slate-100"
-                          : "text-emerald-800 bg-emerald-500/15"
+                          ? "text-[#4A6359] bg-[#E8F0EC]"
+                          : "text-[#0A4D3C] bg-[#F2F7F4] border border-[#DDE7E2]"
                       }`}
                     >
                       {ord.status === "DELIVERED_SETTLED" ? "Tuntas Selesai" : "Dana Aman di Escrow"}
                     </span>
                   </div>
 
-                  <h4 className="font-extrabold text-base text-slate-900 tracking-tight">
+                  <h4 className="font-bold text-base text-[#04261C] tracking-tight">
                     {ord.factoryName}
                   </h4>
-                  <p className="text-xs text-slate-600 mt-0.5">
+                  <p className="text-xs text-[#4A6359] mt-0.5">
                     {ord.sacksCount} karung ({ord.totalKg} kg ampas), {ord.itemName}
                   </p>
 
-                  <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-black/[0.04] text-xs">
-                    <span className="text-slate-600 font-medium">Total Dana</span>
-                    <span className="font-mono font-black text-slate-900 text-sm">
+                  <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-[#E8F0EC] text-xs">
+                    <span className="text-[#4A6359] font-medium">Total Dana</span>
+                    <span className="font-mono font-bold text-[#0A4D3C] text-sm">
                       Rp {ord.totalAmount.toLocaleString("id-ID")}
                     </span>
                   </div>
@@ -339,23 +338,23 @@ export default function Home() {
         </main>
       )}
 
-      {/* Tab: SDG (Apple Health Style) */}
+      {/* Tab: SDG */}
       {activeTab === "sdg" && (
         <main className="flex-1 overflow-y-auto pt-24 pb-20 px-4 sm:px-6 max-w-2xl mx-auto w-full">
-          <div className="text-center py-12 px-6 bg-white border border-black/[0.06] rounded-[32px] space-y-4 shadow-2xs">
-            <span className="text-[10px] font-bold text-emerald-800 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full inline-block">
+          <div className="text-center py-12 px-6 bg-white border border-[#DDE7E2] rounded-[32px] space-y-4 shadow-2xs">
+            <span className="text-xs font-semibold text-[#0A4D3C] bg-[#F2F7F4] border border-[#DDE7E2] px-3 py-1 rounded-full inline-block">
               Dampak Lingkungan
             </span>
-            <h2 className="text-3xl font-black text-slate-900 tracking-[-0.03em]">
+            <h2 className="text-3xl font-extrabold text-[#04261C] tracking-tight">
               Sirkularitas Limbah Ampas Tahu
             </h2>
-            <p className="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
+            <p className="text-xs text-[#4A6359] max-w-md mx-auto leading-relaxed">
               Mencegah fermentasi pembusukan ampas tahu di sungai Bali, menekan emisi metana 1.736 kg CO2e per kg ampas, dan memotong biaya pakan ternak rakyat.
             </p>
             <div className="pt-2">
               <button
                 onClick={() => setIsSDGModalOpen(true)}
-                className="apple-press bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-6 rounded-full text-sm transition-all inline-flex items-center gap-2 shadow-[0_4px_16px_rgba(52,199,89,0.35)] min-h-[44px] focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
+                className="apple-press bg-[#0A4D3C] hover:bg-[#063125] text-white font-bold py-3.5 px-6 rounded-full text-sm transition-all inline-flex items-center gap-2 shadow-xs min-h-[44px] focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
               >
                 <Leaf className="w-4 h-4" />
                 <span>Lihat Metrik Dampak Lingkungan</span>

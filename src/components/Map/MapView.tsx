@@ -64,30 +64,30 @@ export const MapView: React.FC<MapViewProps> = ({
     );
   }
 
-  // Original GPS Location Marker with pulsing ripple effect
+  // GPS Location Marker with refined radar indicator
   const gpsIcon = L.divIcon({
     className: "custom-gps-marker",
     html: `
-      <div style="position:relative;display:flex;align-items:center;justify-content:center;width:28px;height:28px;">
-        <div style="position:absolute;inset:-8px;background:rgba(16,185,129,0.2);border-radius:50%;animation:ping 1.8s cubic-bezier(0,0,0.2,1) infinite;"></div>
-        <div style="width:22px;height:22px;background:#064e3b;border:2.5px solid #ffffff;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(0,0,0,0.3);">
-          <div style="width:8px;height:8px;background:#34d399;border-radius:50%;"></div>
+      <div style="position:relative;display:flex;align-items:center;justify-content:center;width:30px;height:30px;">
+        <div style="position:absolute;inset:-6px;background:rgba(10,77,60,0.18);border-radius:50%;"></div>
+        <div style="width:22px;height:22px;background:#0A4D3C;border:2.5px solid #ffffff;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(4,38,28,0.35);">
+          <div style="width:7px;height:7px;background:#ffffff;border-radius:50%;"></div>
         </div>
       </div>
     `,
-    iconSize: [28, 28],
-    iconAnchor: [14, 14],
+    iconSize: [30, 30],
+    iconAnchor: [15, 15],
   });
 
-  // Original Factory Pin: Factory building icon badge + sack count pill
+  // Premium Green Factory Pin: Factory building icon badge + high-contrast sack count pill
   const createFactoryIcon = (factory: FactoryLocation, isSelected: boolean) => {
     const isGreen = factory.activeBatch.freshnessZone === "green";
-    const bg = isGreen ? "#059669" : "#d97706";
-    const border = isSelected ? "#2563eb" : "#ffffff";
-    const scale = isSelected ? "transform:scale(1.22); z-index: 1000;" : "transition:transform 0.2s;";
+    const bg = isGreen ? "#0A4D3C" : "#9A3412";
+    const border = isSelected ? "#04261C" : "#ffffff";
+    const scale = isSelected ? "transform:scale(1.2); z-index: 1000;" : "transition:transform 0.2s;";
     const ringShadow = isSelected
-      ? "box-shadow: 0 0 0 4px rgba(37,99,235,0.4), 0 8px 18px rgba(0,0,0,0.35);"
-      : "box-shadow: 0 3px 10px rgba(0,0,0,0.25);";
+      ? "box-shadow: 0 0 0 3px rgba(10,77,60,0.4), 0 8px 20px rgba(4,38,28,0.35);"
+      : "box-shadow: 0 4px 12px rgba(4,38,28,0.2);";
 
     return L.divIcon({
       className: `custom-factory-marker ${isSelected ? "selected-factory-marker" : ""}`,
@@ -101,28 +101,32 @@ export const MapView: React.FC<MapViewProps> = ({
             display:flex;align-items:center;justify-content:center;
             ${ringShadow}
           ">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
             </svg>
           </div>
           <div style="
-            margin-top:2px;
-            background:${isSelected ? "#1e293b" : bg};
-            color:#ffffff;
-            font-size:9px;
+            margin-top:3px;
+            background:#ffffff;
+            color:#04261C;
+            font-size:11px;
             font-weight:700;
-            padding:1.5px 6px;
-            border-radius:10px;
+            padding:2px 8px;
+            border-radius:9999px;
             white-space:nowrap;
-            box-shadow:0 2px 5px rgba(0,0,0,0.2);
-            border:1px solid rgba(255,255,255,0.8);
+            box-shadow:0 3px 8px rgba(4,38,28,0.18);
+            border:1.5px solid ${bg};
+            display:flex;
+            align-items:center;
+            gap:4px;
           ">
-            ${factory.activeBatch.availableSacks} krg
+            <span style="width:5px;height:5px;border-radius:50%;background:${bg};display:inline-block;"></span>
+            <span>${factory.activeBatch.availableSacks} krg</span>
           </div>
         </div>
       `,
-      iconSize: [36, 50],
-      iconAnchor: [18, 25],
+      iconSize: [40, 56],
+      iconAnchor: [20, 28],
     });
   };
 
@@ -152,11 +156,11 @@ export const MapView: React.FC<MapViewProps> = ({
             center={[USER_FARMER_LOCATION.latitude, USER_FARMER_LOCATION.longitude]}
             radius={15000}
             pathOptions={{
-              color: "#059669",
+              color: "#0A4D3C",
               weight: 1.5,
               dashArray: "6, 8",
-              fillColor: "#10b981",
-              fillOpacity: 0.05,
+              fillColor: "#0A4D3C",
+              fillOpacity: 0.04,
             }}
           />
         )}
@@ -201,31 +205,31 @@ export const MapView: React.FC<MapViewProps> = ({
               }}
             >
               <Popup className="custom-popup">
-                <div className="p-3 text-slate-800 min-w-[210px]">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">
+                <div className="p-3 text-[#04261C] min-w-[220px]">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-xs font-semibold text-[#0A4D3C] bg-[#F2F7F4] border border-[#DDE7E2] px-2 py-0.5 rounded-md">
                       {factory.activeBatch.freshnessZone === "green" ? "🟢 Segar Prima" : "🟡 Diskon 15%"}
                     </span>
-                    <span className="text-[11px] font-semibold text-slate-600">
+                    <span className="text-xs font-semibold text-[#4A6359]">
                       {formattedDistance} km
                     </span>
                   </div>
 
-                  <h4 className="font-bold text-sm text-slate-900">{factory.name}</h4>
-                  <p className="text-[11px] text-slate-600 mt-0.5">
+                  <h4 className="font-bold text-sm text-[#04261C]">{factory.name}</h4>
+                  <p className="text-xs text-[#4A6359] mt-0.5">
                     {factory.activeBatch.itemName}
                   </p>
 
-                  <div className="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-                    <span className="text-slate-600">Stok:</span>
-                    <span className="font-bold text-slate-900">
+                  <div className="mt-2.5 pt-2 border-t border-[#DDE7E2] flex items-center justify-between text-xs">
+                    <span className="text-[#4A6359]">Stok:</span>
+                    <span className="font-bold text-[#04261C]">
                       {factory.activeBatch.availableSacks} karung
                     </span>
                   </div>
 
                   <div className="mt-1 flex items-center justify-between text-xs">
-                    <span className="text-slate-600">Harga:</span>
-                    <span className="font-bold text-emerald-700 font-mono">
+                    <span className="text-[#4A6359]">Harga:</span>
+                    <span className="font-bold text-[#0A4D3C] font-mono">
                       Rp {factory.activeBatch.pricePerSackIdr.toLocaleString("id-ID")}
                     </span>
                   </div>
@@ -236,7 +240,7 @@ export const MapView: React.FC<MapViewProps> = ({
                         e.stopPropagation();
                         onSelectFactory(factory);
                       }}
-                      className="apple-press min-h-[36px] bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold py-1.5 px-3 rounded-full text-xs transition-colors text-center border border-black/[0.05] focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
+                      className="apple-press min-h-[38px] bg-[#F2F7F4] hover:bg-[#E8F0EC] text-[#04261C] font-semibold py-1.5 px-3 rounded-xl text-xs transition-colors text-center border border-[#DDE7E2] focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
                     >
                       Detail
                     </button>
@@ -245,7 +249,7 @@ export const MapView: React.FC<MapViewProps> = ({
                         e.stopPropagation();
                         onOrderFactory(factory);
                       }}
-                      className="apple-press min-h-[36px] bg-emerald-700 hover:bg-emerald-800 text-white font-semibold py-1.5 px-3 rounded-full text-xs transition-colors flex items-center justify-center gap-1 shadow-[0_2px_6px_rgba(52,199,89,0.3)] focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
+                      className="apple-press min-h-[38px] bg-[#0A4D3C] hover:bg-[#063125] text-white font-semibold py-1.5 px-3 rounded-xl text-xs transition-colors flex items-center justify-center gap-1 shadow-xs focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
                     >
                       <ShieldCheck className="w-3.5 h-3.5" />
                       Pesan

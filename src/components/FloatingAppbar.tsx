@@ -44,26 +44,23 @@ export const FloatingAppbar: React.FC<FloatingAppbarProps> = ({
           <div className="flex items-center justify-between gap-3">
             {/* Brand identity */}
             <div className="flex items-center gap-2.5 shrink-0">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-b from-emerald-500 to-emerald-600 flex items-center justify-center shadow-[0_2px_8px_rgba(52,199,89,0.3)] border border-emerald-400/40">
+              <div className="w-8 h-8 rounded-xl bg-[#0A4D3C] flex items-center justify-center shadow-xs border border-[#063125]">
                 <Compass className="w-4 h-4 text-white" strokeWidth={2.2} />
               </div>
               <div className="flex items-baseline gap-1.5">
-                <span className="text-[15px] sm:text-base font-bold text-slate-900 tracking-[-0.02em]">
+                <span className="text-[15px] sm:text-base font-bold text-[#04261C] tracking-tight">
                   Sirkula
                 </span>
-                <span className="text-[9px] font-bold bg-emerald-500/10 text-emerald-800 border border-emerald-500/20 px-1.5 py-0.5 rounded-md">
+                <span className="text-xs font-semibold bg-[#F2F7F4] text-[#0A4D3C] border border-[#DDE7E2] px-2 py-0.5 rounded-md">
                   Kliring Ampas Tahu
                 </span>
               </div>
             </div>
 
-            {/* GPS Signal Status Badge (Apple Status Style) */}
-            <div className="hidden sm:inline-flex items-center gap-1.5 text-[11px] text-slate-600 bg-black/[0.04] px-2.5 py-1 rounded-full border border-black/[0.04]">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-              </span>
-              <span className="font-medium tracking-tight">GPS 15 km Aktif</span>
+            {/* GPS Signal Status Badge */}
+            <div className="hidden sm:inline-flex items-center gap-2 text-xs text-[#063125] bg-[#F2F7F4] px-3 py-1 rounded-full border border-[#DDE7E2]">
+              <span className="h-2 w-2 rounded-full bg-[#0A4D3C]"></span>
+              <span className="font-semibold tracking-tight">GPS 15 km Aktif</span>
             </div>
 
             {/* Controls */}
@@ -71,10 +68,10 @@ export const FloatingAppbar: React.FC<FloatingAppbarProps> = ({
               {/* Filter toggle button */}
               <button
                 onClick={() => setShowFilters((p) => !p)}
-                className={`apple-press flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 min-h-[40px] rounded-xl border transition-all focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2 ${
+                className={`apple-press flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 min-h-[40px] rounded-xl border transition-all focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2 ${
                   showFilters
-                    ? "bg-emerald-500/10 text-emerald-800 border-emerald-500/30"
-                    : "bg-white/60 hover:bg-white text-slate-600 border-black/[0.06]"
+                    ? "bg-[#0A4D3C] text-white border-[#0A4D3C]"
+                    : "bg-white hover:bg-[#F2F7F4] text-[#04261C] border-[#DDE7E2]"
                 }`}
                 aria-label="Filter pabrik"
                 aria-expanded={showFilters}
@@ -86,10 +83,10 @@ export const FloatingAppbar: React.FC<FloatingAppbarProps> = ({
               {/* Factory List Sheet Toggle */}
               <button
                 onClick={onToggleFactoryList}
-                className={`apple-press flex items-center gap-1.5 px-3 py-1.5 min-h-[40px] rounded-xl text-xs font-semibold transition-all focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2 ${
+                className={`apple-press flex items-center gap-1.5 px-3 py-1.5 min-h-[40px] rounded-xl text-xs font-semibold transition-all focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2 ${
                   isFactoryListOpen
-                    ? "bg-slate-900 text-white shadow-[0_2px_8px_rgba(0,0,0,0.18)]"
-                    : "bg-white/80 text-slate-800 hover:bg-white border border-black/[0.06] shadow-2xs"
+                    ? "bg-[#0A4D3C] text-white shadow-xs"
+                    : "bg-white text-[#04261C] hover:bg-[#F2F7F4] border border-[#DDE7E2] shadow-2xs"
                 }`}
               >
                 <Layers className="w-3.5 h-3.5" />
@@ -104,25 +101,25 @@ export const FloatingAppbar: React.FC<FloatingAppbarProps> = ({
             </div>
           </div>
 
-          {/* Apple Segmented Control Filter Bar */}
+          {/* Segmented Control Filter Bar */}
           {showFilters && (
-            <div className="mt-2.5 pt-2.5 border-t border-black/[0.05] flex items-center justify-between gap-1 overflow-x-auto scrollbar-none animate-in fade-in slide-in-from-top-1 duration-200">
-              <div className="inline-flex p-0.5 bg-black/[0.05] rounded-xl w-full sm:w-auto">
+            <div className="mt-2.5 pt-2.5 border-t border-[#DDE7E2] flex items-center justify-between gap-1 overflow-x-auto scrollbar-none animate-in fade-in slide-in-from-top-1 duration-200">
+              <div className="inline-flex p-0.5 bg-[#F2F7F4] rounded-xl w-full sm:w-auto border border-[#DDE7E2]">
                 {filters.map((f) => {
                   const isActive = activeFilter === f.key;
                   return (
                     <button
                       key={f.key}
                       onClick={() => onFilterChange(f.key)}
-                      className={`apple-press-sm flex-1 sm:flex-initial px-3 py-1 rounded-[10px] text-[11px] font-semibold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap ${
+                      className={`apple-press-sm flex-1 sm:flex-initial px-3.5 py-1.5 rounded-[10px] text-xs font-semibold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap min-h-[36px] ${
                         isActive
-                          ? "bg-white text-slate-900 shadow-[0_1px_4px_rgba(0,0,0,0.08)]"
-                          : "text-slate-600 hover:text-slate-900"
+                          ? "bg-[#0A4D3C] text-white shadow-xs"
+                          : "text-[#4A6359] hover:text-[#04261C]"
                       }`}
                     >
                       {f.dot && (
                         <span
-                          className="w-1.5 h-1.5 rounded-full shrink-0"
+                          className="w-2 h-2 rounded-full shrink-0"
                           style={{ backgroundColor: f.dot }}
                         />
                       )}

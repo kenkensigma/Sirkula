@@ -11,20 +11,28 @@
 - **RHYTHM: 2 (Structured with Intentional Breaks)** - Kartu pabrik konsisten dengan indikator zona kesegaran yang jelas dan lembar checkout yang terarah.
 - **MOTION: 1 (Calm & Utilitarian)** - Transisi status yang bertujuan dan pembaruan hitungan mundur; tanpa animasi melayang atau efek paralaks yang tidak perlu.
 
-## Color System
-- **Core Dark / Forest**: `#09251c` (Hijau hutan alami untuk penegasan merek dan teks utama)
-- **Primary Action & Freshness**: `#15803d` / `#166534` (Hijau emerald untuk ampas segar Zona Hijau dan tombol aksi)
-- **Secondary Warmth & Alert**: `#a55704` / `#b45309` (Kuning-amber kedelai untuk peringatan Zona Kuning diskon 15%)
-- **Neutral Canvas**: `#fcfbf9` / `#f8fafc` (Latar hangat alami)
-- **Surface Cards**: `#ffffff` dengan border `#e2e8f0` yang tegas
-- **Ink Primary**: `#0f172a` (Slate gelap, kontras tinggi > 12:1)
-- **Ink Secondary**: `#334155` (Slate-700, kontras > 7:1)
-- **Ink Muted**: `#475569` (Slate-600, kontras > 4.8:1, memenuhi WCAG AA)
+## Color System (Premium Green & Pure White)
+- **Primary Jewel Pine Green**: `#0A4D3C` (Hijau botol mewah / British racing green untuk tombol utama, sorotan merek, dan status aktif)
+- **Deep Forest Dark**: `#04261C` (Hijau hutan sangat pekat untuk tipografi utama dan header, kontras > 15:1 terhadap putih)
+- **Secondary Emerald Accent**: `#106950` (Aksen hijau sedang untuk hover dan transisi interaktif)
+- **Muted Sage Green**: `#4A6359` (Teks sekunder dan label pendukung, kontras > 5.5:1 terhadap putih)
+- **Pure White Surface**: `#FFFFFF` (Permukaan kartu, modal, popover, dan panel kontrol)
+- **Tinted Soft Green**: `#F2F7F4` / `#F4F8F5` (Latar belakang lembut dan kontainer elemen aktif)
+- **Subtle Sage Border**: `#DDE7E2` (Garis tepi halus dan elegan pengganti border abu-abu standar)
+- **Alert & Warmth**: `#9A3412` / `#B45309` (Amber kedelai kontras tinggi untuk diskon dan SLA)
 
 ## Typography
-- **Headings**: Poppins tebal dengan tracking natural (tanpa spasi huruf berlebihan pada huruf kapital).
-- **Body & Controls**: Sans-serif yang mudah dibaca dengan target sentuh minimal 44px.
-- **Numbers & Metrics**: Tabular numbers untuk timer kesegaran, volume karung, dan nominal rupiah.
+- **Primary Typeface**: `Plus Jakarta Sans` via `next/font/google` (Modern, geometris elegan, keterbacaan tinggi di berbagai ukuran layar).
+- **Body & Controls**: Ukuran fungsional minimal 12px (`text-xs`), menghilangkan teks terlalu kecil (sub-11px) untuk memenuhi standar aksesibilitas dan audit Impeccable.
+- **Numbers & Metrics**: Monospace tabular untuk timer kesegaran 12 jam, volume karung, dan nominal rupiah.
+
+## Impeccable Visual Quality Resolutions
+- **AI Color Palette**: Menggantikan gradien neon Tailwind generic (`from-emerald-500 to-emerald-600`) dengan palet solid berkelas `#0A4D3C` dan putih bersih.
+- **Undersized Functional Text**: Memperbesar badge status ("Kliring Ampas Tahu") dan label navigasi bawah dari 9-10px menjadi 12px (`text-xs font-semibold`).
+- **Positioned Child Clipped by Overflow Container**: Memindahkan drawer lembar pabrik (`<aside>`) dari dalam kontainer `<main overflow-hidden>` ke struktur flex root sehingga tepi kiri kartu tidak terpotong.
+- **Tiny Body Text**: Meningkatkan teks deskripsi dan subtitle dari 11px ke 12px dengan kontras warna `#4A6359`.
+- **Nested Cards**: Menghilangkan efek kotak berlapis-lapis (double border & double shadow) pada daftar pabrik; menggantinya dengan kartu ubin datar (*flat tiles*) bergaris tepi `#E2EBE5`.
+- **Low Contrast Text**: Mengganti teks putih 9px di atas badge oranye/hijau pada pin peta dengan kapsul putih berbingkai presisi dan teks gelap `#04261C` (rasio kontras 15.6:1, melebihi WCAG AAA).
 
 ## Identity Motifs
 - **Freshness SLA Meter**: Bilah hitung mundur 12 jam dengan penanda Zona Hijau (0-8 jam) dan Zona Kuning (8-10.5 jam).

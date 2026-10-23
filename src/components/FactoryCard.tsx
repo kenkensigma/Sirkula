@@ -47,69 +47,69 @@ export const FactoryCard: React.FC<FactoryCardProps> = ({
 
   return (
     <article
-      className={`apple-press relative rounded-xl border bg-white p-4 transition-colors ${
+      className={`apple-press relative rounded-2xl p-4 transition-all ${
         isSelected
-          ? "border-green-700 bg-green-50/60"
-          : "border-stone-200 hover:border-stone-300"
+          ? "border-2 border-[#0A4D3C] bg-[#F2F7F4] shadow-xs"
+          : "border border-[#E2EBE5] bg-white hover:bg-[#F7FAF8] hover:border-[#CBDCD2]"
       }`}
     >
       {/* Status + district */}
-      <p className="flex items-center gap-2 text-xs text-stone-600">
+      <div className="flex items-center justify-between gap-2 text-xs">
         <span
-          className={`inline-flex items-center gap-1.5 font-medium ${
-            isGreen ? "text-green-800" : "text-amber-800"
+          className={`inline-flex items-center gap-1.5 font-semibold ${
+            isGreen ? "text-[#0A4D3C]" : "text-[#9A3412]"
           }`}
         >
           <span
             aria-hidden
-            className={`size-1.5 rounded-full ${isGreen ? "bg-green-700" : "bg-amber-600"}`}
+            className={`w-2 h-2 rounded-full ${isGreen ? "bg-[#0A4D3C]" : "bg-[#9A3412]"}`}
           />
           {isGreen ? "Segar prima" : "Diskon 15%"}
         </span>
-        <span className="truncate">{factory.district}</span>
-      </p>
+        <span className="truncate text-[#4A6359] font-medium">{factory.district}</span>
+      </div>
 
       {/* Name + distance */}
-      <div className="mt-1.5 flex items-baseline justify-between gap-3">
-        <h3 className="min-w-0 truncate text-base font-semibold text-stone-900">
+      <div className="mt-2 flex items-baseline justify-between gap-3">
+        <h3 className="min-w-0 truncate text-base font-bold text-[#04261C]">
           {/* Stretched button: the whole card selects, without nesting the order button inside it */}
           <button
             type="button"
             onClick={() => onSelect(factory)}
             aria-pressed={isSelected}
-            className="cursor-pointer text-left outline-none after:absolute after:inset-0 after:rounded-xl focus-visible:after:ring-2 focus-visible:after:ring-green-700 focus-visible:after:ring-offset-2"
+            className="cursor-pointer text-left outline-none after:absolute after:inset-0 after:rounded-2xl focus-visible:after:ring-2 focus-visible:after:ring-[#0A4D3C] focus-visible:after:ring-offset-2"
           >
             {factory.name}
           </button>
         </h3>
-        <p className="shrink-0 text-xs tabular-nums text-stone-600">
+        <p className="shrink-0 text-xs tabular-nums text-[#4A6359] font-medium">
           {formattedDistance} km · ~{estimatedMins} mnt
         </p>
       </div>
-      <p className="mt-0.5 truncate text-sm text-stone-600">{factory.activeBatch.itemName}</p>
+      <p className="mt-0.5 truncate text-sm text-[#4A6359]">{factory.activeBatch.itemName}</p>
 
       {/* Freshness + stock */}
       <dl className="mt-3 flex items-center justify-between gap-3 text-sm">
         <div className="flex items-baseline gap-1.5">
           <dt className="sr-only">Sisa waktu segar</dt>
-          <dd className="font-medium tabular-nums text-stone-900">
+          <dd className="font-semibold tabular-nums text-[#04261C]">
             {hours}j {minutes}m
-            <span className="ml-1 font-normal text-stone-600">tersisa</span>
+            <span className="ml-1 font-normal text-[#4A6359]">tersisa</span>
           </dd>
         </div>
         <div className="flex items-baseline gap-1.5">
           <dt className="sr-only">Stok</dt>
-          <dd className="tabular-nums text-stone-900">
-            <span className="font-medium">{factory.activeBatch.availableSacks}</span> krg
-            <span className="ml-1 text-stone-600">({totalKg} kg)</span>
+          <dd className="tabular-nums text-[#04261C]">
+            <span className="font-semibold">{factory.activeBatch.availableSacks}</span> krg
+            <span className="ml-1 text-[#4A6359]">({totalKg} kg)</span>
           </dd>
         </div>
       </dl>
 
       {/* Price + action */}
-      <div className="mt-4 flex items-center justify-between gap-3">
-        <p className="text-stone-600">
-          <span className="text-lg font-semibold tabular-nums text-stone-900">
+      <div className="mt-3.5 pt-3 border-t border-[#E8F0EC] flex items-center justify-between gap-3">
+        <p className="text-[#4A6359]">
+          <span className="text-lg font-bold tabular-nums text-[#0A4D3C] font-mono">
             Rp {factory.activeBatch.pricePerSackIdr.toLocaleString("id-ID")}
           </span>
           <span className="ml-1 text-xs">/karung</span>
@@ -118,7 +118,7 @@ export const FactoryCard: React.FC<FactoryCardProps> = ({
         <button
           type="button"
           onClick={() => onOrder(factory)}
-          className="apple-press-sm relative z-10 min-h-[44px] sm:min-h-10 cursor-pointer rounded-lg bg-green-800 px-4 text-sm font-medium text-white transition-colors hover:bg-green-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-800"
+          className="apple-press-sm relative z-10 min-h-[44px] sm:min-h-10 cursor-pointer rounded-xl bg-[#0A4D3C] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#063125] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A4D3C] shadow-xs"
         >
           Pesan
         </button>
