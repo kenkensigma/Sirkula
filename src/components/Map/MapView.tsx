@@ -230,13 +230,13 @@ export const MapView: React.FC<MapViewProps> = ({
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-1.5 mt-3">
+                  <div className="grid grid-cols-2 gap-2 mt-3.5">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         onSelectFactory(factory);
                       }}
-                      className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-1.5 rounded-lg text-xs transition-colors text-center border border-slate-200"
+                      className="apple-press bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold py-1.5 px-3 rounded-full text-xs transition-colors text-center border border-black/[0.05]"
                     >
                       Detail
                     </button>
@@ -245,7 +245,7 @@ export const MapView: React.FC<MapViewProps> = ({
                         e.stopPropagation();
                         onOrderFactory(factory);
                       }}
-                      className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-1.5 rounded-lg text-xs transition-colors flex items-center justify-center gap-1 shadow-2xs"
+                      className="apple-press bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-1.5 px-3 rounded-full text-xs transition-colors flex items-center justify-center gap-1 shadow-[0_2px_6px_rgba(52,199,89,0.3)]"
                     >
                       <ShieldCheck className="w-3.5 h-3.5" />
                       Pesan

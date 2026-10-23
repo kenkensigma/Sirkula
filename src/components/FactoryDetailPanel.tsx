@@ -22,6 +22,7 @@ import {
   Scale,
   Quote,
   ChevronRight,
+  Info,
 } from "lucide-react";
 
 interface FactoryDetailPanelProps {
@@ -100,193 +101,227 @@ export const FactoryDetailPanel: React.FC<FactoryDetailPanelProps> = ({
     }
   };
 
-  const quickActions = [
-    {
-      label: "Rute",
-      icon: <Navigation className="w-4 h-4 text-blue-600" />,
-      onClick: handleOpenGoogleMapsRoute,
-    },
-    {
-      label: "Telepon",
-      icon: <Phone className="w-4 h-4 text-emerald-600" />,
-      href: `tel:${factory.phone}`,
-    },
-    {
-      label: copied ? "Tersalin" : "Salin",
-      icon: copied ? (
-        <Check className="w-4 h-4 text-emerald-600" />
-      ) : (
-        <Copy className="w-4 h-4 text-slate-600" />
-      ),
-      onClick: handleCopyAddress,
-    },
-    {
-      label: "Bagikan",
-      icon: <Share2 className="w-4 h-4 text-slate-600" />,
-      onClick: handleShare,
-    },
-  ];
-
-  const actionClass =
-    "flex flex-col items-center justify-center gap-1 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 transition-colors border border-slate-200 text-[10px] font-semibold active:scale-[0.97]";
-
   return (
-    <div className="flex flex-col h-full bg-white text-slate-800 animate-in fade-in slide-in-from-right-4 duration-300">
-      {/* Top bar */}
-      <div className="p-3 px-4 border-b border-slate-100 flex items-center justify-between bg-white/95 backdrop-blur-md sticky top-0 z-20 shrink-0">
+    <div className="flex flex-col h-full bg-white text-slate-900 animate-in fade-in slide-in-from-right-4 duration-300">
+      {/* Apple Sheet Grabber Handle */}
+      <div className="pt-2 pb-1 bg-white shrink-0">
+        <div className="apple-sheet-handle" />
+      </div>
+
+      {/* Top navigation bar */}
+      <div className="px-4 py-2 border-b border-black/[0.05] flex items-center justify-between bg-white/90 backdrop-blur-md sticky top-0 z-20 shrink-0">
         <button
           onClick={onBack}
-          className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors py-1 px-2 rounded-lg hover:bg-slate-100 -ml-1"
+          className="apple-press inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 hover:text-emerald-800 transition-colors py-1 px-2.5 rounded-full bg-emerald-500/10 border border-emerald-500/20"
         >
-          <ArrowLeft className="w-4 h-4 text-slate-700" />
+          <ArrowLeft className="w-3.5 h-3.5" />
           <span>Semua Pabrik</span>
         </button>
 
         <button
           onClick={onClose}
-          className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+          className="apple-press p-1.5 rounded-full bg-black/[0.04] hover:bg-black/[0.08] text-slate-500 transition-colors"
           title="Tutup Panel"
+          aria-label="Tutup Panel"
         >
           <X className="w-4 h-4" />
         </button>
       </div>
 
-      {/* Scrollable body */}
+      {/* Scrollable sheet body */}
       <div className="flex-1 overflow-y-auto">
-        {/* ── Hero: identity ── */}
-        <section className="px-4 pt-4 pb-5 bg-gradient-to-b from-emerald-50/60 to-white">
-          <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full">
-            <ShieldCheck className="w-3 h-3 text-emerald-600" />
-            Mitra Terverifikasi Sirkula
-          </span>
+        {/* Apple Maps Style Place Hero */}
+        <section className="px-5 pt-4 pb-4">
+          <div className="flex items-center gap-1.5 mb-1.5">
+            <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.06em] bg-emerald-500/10 text-emerald-800 border border-emerald-500/20 px-2.5 py-0.5 rounded-full">
+              <ShieldCheck className="w-3 h-3 text-emerald-600" />
+              Mitra Terverifikasi Escrow
+            </span>
+          </div>
 
-          <h2 className="text-xl font-black text-slate-900 leading-tight mt-2">
+          <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-[-0.025em] leading-tight">
             {factory.name}
           </h2>
-          <p className="text-xs text-slate-500 mt-1">{factory.district}</p>
+          <p className="text-xs text-slate-500 mt-0.5">{factory.district}</p>
 
-          <div className="flex items-center gap-2 mt-3 flex-wrap">
-            <div className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-lg border border-amber-200/60 text-xs">
-              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+          <div className="flex items-center gap-2 mt-3 flex-wrap text-xs">
+            <div className="inline-flex items-center gap-1 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20 font-medium">
+              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
               <span className="text-slate-900 font-bold">{factory.rating}</span>
-              <span className="text-slate-500">({factory.reviewsCount} ulasan)</span>
+              <span className="text-slate-500 text-[11px]">({factory.reviewsCount})</span>
             </div>
-            <div className="flex items-center gap-1 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-200 text-xs font-semibold text-emerald-700">
+            <div className="inline-flex items-center gap-1 bg-black/[0.04] px-2.5 py-1 rounded-full border border-black/[0.04] font-semibold text-slate-700">
               <MapPin className="w-3.5 h-3.5 text-emerald-600" />
-              {formattedDistance} km · ~{estimatedMinutes} menit
+              <span>{formattedDistance} km</span>
+              <span className="text-slate-400 font-normal">· ~{estimatedMinutes} mnt</span>
             </div>
           </div>
         </section>
 
-        <div className="px-4 pb-5 space-y-5">
-          {/* ── Quick actions ── */}
-          <section className="grid grid-cols-4 gap-2">
-            {quickActions.map((action) =>
-              action.href ? (
-                <a key={action.label} href={action.href} className={actionClass}>
-                  {action.icon}
-                  <span>{action.label}</span>
-                </a>
-              ) : (
-                <button key={action.label} onClick={action.onClick} className={actionClass}>
-                  {action.icon}
-                  <span>{action.label}</span>
-                </button>
-              )
-            )}
-          </section>
+        {/* Apple Maps 4-up Circular Action Pods */}
+        <section className="px-5 py-2">
+          <div className="grid grid-cols-4 gap-2 text-center">
+            {/* Rute */}
+            <button
+              onClick={handleOpenGoogleMapsRoute}
+              className="apple-press flex flex-col items-center gap-1 group"
+            >
+              <div className="w-11 h-11 rounded-full bg-blue-500/10 text-blue-600 flex items-center justify-center border border-blue-500/20 shadow-2xs group-hover:scale-105 transition-transform">
+                <Navigation className="w-5 h-5" />
+              </div>
+              <span className="text-[11px] font-semibold text-slate-700">Rute</span>
+            </button>
 
-          {/* ── Offer: product, price, stock ── */}
-          <section className="rounded-2xl border border-slate-200 overflow-hidden">
-            <div className="p-4 bg-slate-50 border-b border-slate-200">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                Produk Tersedia
-              </p>
-              <h3 className="text-sm font-bold text-slate-900 mt-1">
+            {/* Pesan */}
+            <button
+              onClick={() => onOrder(factory)}
+              className="apple-press flex flex-col items-center gap-1 group"
+            >
+              <div className="w-11 h-11 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-[0_2px_8px_rgba(52,199,89,0.35)] group-hover:scale-105 transition-transform">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+              <span className="text-[11px] font-bold text-emerald-800">Pesan</span>
+            </button>
+
+            {/* Telepon */}
+            <a
+              href={`tel:${factory.phone}`}
+              className="apple-press flex flex-col items-center gap-1 group"
+            >
+              <div className="w-11 h-11 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center border border-black/[0.06] shadow-2xs group-hover:scale-105 transition-transform">
+                <Phone className="w-4 h-4 text-emerald-600" />
+              </div>
+              <span className="text-[11px] font-semibold text-slate-700">Telepon</span>
+            </a>
+
+            {/* Bagikan */}
+            <button
+              onClick={handleShare}
+              className="apple-press flex flex-col items-center gap-1 group"
+            >
+              <div className="w-11 h-11 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center border border-black/[0.06] shadow-2xs group-hover:scale-105 transition-transform">
+                {copied ? (
+                  <Check className="w-4 h-4 text-emerald-600" />
+                ) : (
+                  <Share2 className="w-4 h-4 text-slate-600" />
+                )}
+              </div>
+              <span className="text-[11px] font-semibold text-slate-700">
+                {copied ? "Tersalin" : "Bagikan"}
+              </span>
+            </button>
+          </div>
+        </section>
+
+        <div className="px-5 pb-6 space-y-4 mt-2">
+          {/* Apple Offer Card: Product, Price, Stock */}
+          <section className="rounded-2xl border border-black/[0.06] bg-slate-50/70 overflow-hidden shadow-2xs">
+            <div className="p-4 bg-white border-b border-black/[0.04]">
+              <span className="text-[10px] font-bold uppercase tracking-[0.06em] text-slate-400">
+                Produk Unggulan
+              </span>
+              <h3 className="text-base font-bold text-slate-900 mt-1 tracking-[-0.01em]">
                 {factory.activeBatch.itemName}
               </h3>
-              <p className="text-[11px] text-slate-500 mt-0.5">
+              <p className="text-xs text-slate-500 mt-0.5">
                 {factory.activeBatch.itemSubtitle}
               </p>
             </div>
 
-            <div className="p-4 bg-white">
-              <div className="flex items-end justify-between">
+            <div className="p-4 bg-white/70 backdrop-blur-md">
+              <div className="flex items-baseline justify-between">
                 <div>
-                  <p className="text-[10px] font-medium text-slate-400">Harga Pabrik</p>
-                  <p className="text-2xl font-extrabold text-emerald-700 font-mono leading-none mt-1">
-                    {priceLabel}
-                  </p>
-                  <p className="text-[10px] text-slate-400 mt-1">per karung</p>
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                    Harga Mitra Pabrik
+                  </span>
+                  <div className="flex items-baseline gap-1 mt-0.5">
+                    <span className="text-2xl font-extrabold text-emerald-700 font-mono tracking-tight">
+                      {priceLabel}
+                    </span>
+                    <span className="text-xs text-slate-400 font-normal">/karung</span>
+                  </div>
                 </div>
+
                 {!isGreen && (
-                  <span className="text-[10px] font-bold px-2 py-1 rounded-full bg-amber-200/80 text-amber-900">
+                  <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-900 border border-amber-500/20">
                     Diskon 15%
                   </span>
                 )}
               </div>
 
-              <div className="grid grid-cols-2 gap-2 mt-4">
-                <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
+              <div className="grid grid-cols-2 gap-2 mt-3.5">
+                <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-50 border border-black/[0.04]">
                   <Package className="w-4 h-4 text-emerald-600 shrink-0" />
                   <div>
-                    <p className="text-[10px] text-slate-400 font-medium">Stok Siap Angkut</p>
-                    <p className="text-xs font-bold text-slate-900">
+                    <span className="text-[10px] text-slate-400 font-medium block">
+                      Stok Siap Angkut
+                    </span>
+                    <span className="text-xs font-bold text-slate-900">
                       {factory.activeBatch.availableSacks} karung
-                    </p>
+                    </span>
                   </div>
                 </div>
-                <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
+
+                <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-50 border border-black/[0.04]">
                   <Scale className="w-4 h-4 text-emerald-600 shrink-0" />
                   <div>
-                    <p className="text-[10px] text-slate-400 font-medium">Total Berat</p>
-                    <p className="text-xs font-bold text-slate-900">
-                      {totalKg} kg
-                      <span className="text-slate-400 font-normal">
-                        {" "}
-                        ({factory.activeBatch.weightPerSackKg} kg/krg)
+                    <span className="text-[10px] text-slate-400 font-medium block">
+                      Total Berat
+                    </span>
+                    <span className="text-xs font-bold text-slate-900">
+                      {totalKg} kg{" "}
+                      <span className="text-slate-400 text-[10px] font-normal">
+                        ({factory.activeBatch.weightPerSackKg}kg/krg)
                       </span>
-                    </p>
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
           </section>
 
-          {/* ── Freshness ── */}
+          {/* Apple Activity / Health Style Freshness Meter */}
           <section
-            className={`p-4 rounded-2xl border ${
-              isGreen ? "bg-emerald-50/70 border-emerald-200" : "bg-amber-50/70 border-amber-200"
+            className={`p-4 rounded-2xl border transition-all ${
+              isGreen
+                ? "bg-gradient-to-br from-emerald-50/70 to-emerald-50/30 border-emerald-500/20"
+                : "bg-gradient-to-br from-amber-50/70 to-amber-50/30 border-amber-500/20"
             }`}
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold flex items-center gap-1.5">
+              <span className="text-xs font-bold flex items-center gap-1.5 text-slate-900">
                 <Clock className={`w-4 h-4 ${isGreen ? "text-emerald-600" : "text-amber-600"}`} />
-                <span className={isGreen ? "text-emerald-900" : "text-amber-900"}>
-                  {isGreen ? "Zona Hijau: Kualitas Prima" : "Zona Kuning: Diskon Cepat 15%"}
-                </span>
+                <span>{isGreen ? "Zona Hijau: Kualitas Prima" : "Zona Kuning: Diskon Cepat"}</span>
+              </span>
+              <span
+                className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                  isGreen
+                    ? "bg-emerald-500/10 text-emerald-800"
+                    : "bg-amber-500/10 text-amber-900"
+                }`}
+              >
+                SLA 12 Jam
               </span>
             </div>
 
-            <div className="flex items-baseline gap-1 mt-3">
+            <div className="flex items-baseline gap-1.5 mt-3">
               <span
-                className={`text-2xl font-black font-mono tabular-nums ${
+                className={`text-2xl sm:text-3xl font-black font-mono tracking-tight tabular-nums ${
                   isGreen ? "text-emerald-900" : "text-amber-900"
                 }`}
               >
                 {pad(hours)}:{pad(minutes)}:{pad(seconds)}
               </span>
-              <span className="text-[11px] text-slate-500 ml-1">sisa waktu kesegaran</span>
+              <span className="text-xs text-slate-500">sisa kesegaran</span>
             </div>
 
-            <div
-              className={`h-1.5 rounded-full mt-3 overflow-hidden ${
-                isGreen ? "bg-emerald-200/80" : "bg-amber-200/80"
-              }`}
-            >
+            {/* Apple Activity-style Progress Bar */}
+            <div className="h-2 rounded-full bg-black/[0.06] mt-3 overflow-hidden p-0.5">
               <div
-                className={`h-full rounded-full transition-all duration-1000 ease-linear ${
-                  isGreen ? "bg-emerald-600" : "bg-amber-500"
+                className={`h-full rounded-full transition-all duration-1000 ease-linear shadow-xs ${
+                  isGreen
+                    ? "bg-gradient-to-r from-emerald-400 to-emerald-600"
+                    : "bg-gradient-to-r from-amber-400 to-amber-600"
                 }`}
                 style={{ width: `${freshnessPercent}%` }}
               />
@@ -294,33 +329,33 @@ export const FactoryDetailPanel: React.FC<FactoryDetailPanelProps> = ({
 
             <p className="text-[11px] text-slate-600 leading-relaxed mt-3">
               {isGreen
-                ? "Ampas tahu baru dimasak dan dipres pagi ini. Kondisi masih sangat segar dengan aroma kedelai gurih alami, cocok untuk memaksimalkan penyerapan protein ternak."
-                : "Ampas tahu mendekati batas 10 jam. Kualitas fisik tetap aman dan higienis, ditawarkan dengan potongan harga khusus 15% sebelum memasuki fase fermentasi."}
+                ? "Ampas tahu baru dimasak dan dipres subuh tadi. Kondisi hangat dengan aroma kedelai murni gurih alami, optimal untuk penyerapan pakan ternak."
+                : "Ampas tahu mendekati 10 jam. Kualitas fisik tetap aman dan higienis, ditawarkan diskon 15% sebelum proses asam."}
             </p>
           </section>
 
-          {/* ── Lab quality ── */}
+          {/* Lab Quality & Nutrition Cards */}
           <section>
-            <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
-              Mutu Pakan
-            </h4>
+            <span className="text-[10px] font-bold uppercase tracking-[0.06em] text-slate-400 block mb-2">
+              Uji Mutu Laboratorium
+            </span>
 
             <div className="grid grid-cols-3 gap-2 text-center">
-              <div className="bg-white p-3 rounded-xl border border-slate-200">
+              <div className="bg-white p-3 rounded-2xl border border-black/[0.06] shadow-2xs">
                 <Dna className="w-4 h-4 text-emerald-600 mx-auto mb-1" />
-                <span className="text-sm font-extrabold text-slate-900 block">
+                <span className="text-sm font-extrabold text-slate-900 block font-mono">
                   {factory.activeBatch.proteinContent}
                 </span>
                 <span className="text-[10px] text-slate-400 font-medium">Protein Kasar</span>
               </div>
-              <div className="bg-white p-3 rounded-xl border border-slate-200">
+              <div className="bg-white p-3 rounded-2xl border border-black/[0.06] shadow-2xs">
                 <Droplet className="w-4 h-4 text-blue-500 mx-auto mb-1" />
-                <span className="text-sm font-extrabold text-slate-900 block">
+                <span className="text-sm font-extrabold text-slate-900 block font-mono">
                   {factory.activeBatch.moistureContent}
                 </span>
                 <span className="text-[10px] text-slate-400 font-medium">Kadar Air</span>
               </div>
-              <div className="bg-white p-3 rounded-xl border border-slate-200">
+              <div className="bg-white p-3 rounded-2xl border border-black/[0.06] shadow-2xs">
                 <Flame className="w-4 h-4 text-amber-500 mx-auto mb-1" />
                 <span
                   className="text-sm font-extrabold text-slate-900 block truncate"
@@ -329,54 +364,55 @@ export const FactoryDetailPanel: React.FC<FactoryDetailPanelProps> = ({
                   {factory.activeBatch.temperatureStatus.includes("38°C") ? "~38°C" : "Optimal"}
                 </span>
                 <span className="text-[10px] text-slate-400 font-medium">
-                  {factory.activeBatch.temperatureStatus.includes("38°C") ? "Hangat" : "Suhu Fisik"}
+                  {factory.activeBatch.temperatureStatus.includes("38°C") ? "Hangat" : "Suhu"}
                 </span>
               </div>
             </div>
 
-            <div className="mt-2 p-3 bg-slate-50 rounded-xl border border-slate-200/70 flex gap-2">
-              <Quote className="w-4 h-4 text-slate-300 shrink-0 mt-0.5" />
-              <p className="text-xs text-slate-700 italic leading-relaxed">
-                {factory.activeBatch.qualityNotes}
+            {/* Quality Note Quote Callout */}
+            <div className="mt-2.5 p-3 rounded-2xl bg-slate-50 border border-black/[0.04] flex items-start gap-2.5">
+              <Quote className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+              <p className="text-xs text-slate-600 italic leading-relaxed">
+                &ldquo;{factory.activeBatch.qualityNotes}&rdquo;
               </p>
             </div>
           </section>
 
-          {/* ── Factory info ── */}
+          {/* Apple iOS Grouped List for Factory & Location Info */}
           <section>
-            <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
-              Informasi Pabrik &amp; Lokasi
-            </h4>
+            <span className="text-[10px] font-bold uppercase tracking-[0.06em] text-slate-400 block mb-2">
+              Informasi Operasional
+            </span>
 
-            <div className="rounded-2xl border border-slate-200 divide-y divide-slate-100 overflow-hidden text-xs">
+            <div className="rounded-2xl border border-black/[0.06] bg-white divide-y divide-black/[0.04] overflow-hidden text-xs shadow-2xs">
               <button
                 onClick={handleOpenGoogleMapsRoute}
-                className="w-full flex items-center gap-3 p-3 text-left hover:bg-slate-50 transition-colors"
+                className="apple-press w-full flex items-center gap-3 p-3.5 text-left hover:bg-slate-50 transition-colors"
               >
                 <MapPin className="w-4 h-4 text-slate-400 shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <span className="font-semibold text-slate-800 block">Alamat Lengkap</span>
-                  <span className="text-slate-500 text-[11px] block">{factory.address}</span>
+                  <span className="font-semibold text-slate-900 block">Alamat Lengkap</span>
+                  <span className="text-slate-500 text-[11px] block mt-0.5">{factory.address}</span>
                 </div>
                 <ChevronRight className="w-4 h-4 text-slate-300 shrink-0" />
               </button>
 
-              <div className="flex items-center gap-3 p-3">
+              <div className="flex items-center gap-3 p-3.5">
                 <Clock className="w-4 h-4 text-slate-400 shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <span className="font-semibold text-slate-800 block">Jam Produksi &amp; Buka</span>
-                  <span className="text-slate-500 text-[11px] block">{factory.operatingHours}</span>
+                  <span className="font-semibold text-slate-900 block">Jam Produksi &amp; Ambil</span>
+                  <span className="text-slate-500 text-[11px] block mt-0.5">{factory.operatingHours}</span>
                 </div>
               </div>
 
               <a
                 href={`tel:${factory.phone}`}
-                className="flex items-center gap-3 p-3 hover:bg-slate-50 transition-colors"
+                className="apple-press flex items-center gap-3 p-3.5 hover:bg-slate-50 transition-colors"
               >
                 <Phone className="w-4 h-4 text-slate-400 shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <span className="font-semibold text-slate-800 block">Kontak PIC</span>
-                  <span className="text-slate-500 text-[11px] font-mono block">{factory.phone}</span>
+                  <span className="font-semibold text-slate-900 block">Kontak PIC Pabrik</span>
+                  <span className="text-slate-500 text-[11px] font-mono block mt-0.5">{factory.phone}</span>
                 </div>
                 <ChevronRight className="w-4 h-4 text-slate-300 shrink-0" />
               </a>
@@ -385,17 +421,19 @@ export const FactoryDetailPanel: React.FC<FactoryDetailPanelProps> = ({
         </div>
       </div>
 
-      {/* Sticky CTA */}
-      <div className="p-3 px-4 border-t border-slate-100 bg-white sticky bottom-0 z-20 shrink-0">
+      {/* Sticky Apple Pay Style Bottom Primary Action */}
+      <div className="p-3.5 px-5 border-t border-black/[0.06] bg-white/95 backdrop-blur-xl sticky bottom-0 z-20 shrink-0">
         <button
           onClick={() => onOrder(factory)}
-          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-2xl text-xs sm:text-sm transition-all flex items-center justify-between active:scale-[0.98] shadow-md shadow-emerald-600/20"
+          className="apple-press w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-5 rounded-full text-sm transition-all flex items-center justify-between shadow-[0_4px_16px_rgba(52,199,89,0.35)]"
         >
           <span className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4" />
-            Pesan Sekarang
+            <span>Pesan Sekarang (Escrow)</span>
           </span>
-          <span className="font-mono">{priceLabel}</span>
+          <span className="font-mono text-xs bg-white/20 py-1 px-2.5 rounded-full">
+            {priceLabel}
+          </span>
         </button>
       </div>
     </div>

@@ -5,31 +5,108 @@
 @tailwind utilities;
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
-  --ink: #0f172a;
-  --ink2: #475569;
-  --muted: #94a3b8;
-  --line: #e2e8f0;
-  --card: #ffffff;
-  --ok: #16a34a;
-  --ok-bg: #dcfce7;
-  --warn: #d97706;
-  --warn-bg: #fef3c7;
-  --bad: #dc2626;
-  --accent: #16a34a;
-  --shadow: 0 6px 24px rgba(15, 23, 42, 0.10);
+  --background: #fbfbfd;
+  --foreground: #1d1d1f;
+  --surface: #ffffff;
+  --surface-secondary: #f5f5f7;
+  --surface-tertiary: #e8e8ed;
+  --ink: #1d1d1f;
+  --ink-secondary: #6e6e73;
+  --ink-tertiary: #86868b;
+  --line: rgba(0, 0, 0, 0.08);
+  --line-strong: rgba(0, 0, 0, 0.14);
+  --accent-green: #34c759;
+  --accent-green-dark: #28cd41;
+  --accent-blue: #0071e3;
+  --accent-amber: #ff9f0a;
+  --accent-red: #ff3b30;
+  
+  /* Apple standard spring easing */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring-snappy: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-out-apple: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: var(--font-poppins), "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "Segoe UI", Roboto, sans-serif;
   overflow-x: hidden;
   -webkit-tap-highlight-color: transparent;
+  letter-spacing: -0.01em;
 }
 
-/* Hide scrollbars */
+/* Apple Frosted Glass Materials (§12) */
+.apple-glass {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-top: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.apple-glass-card {
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.apple-glass-pill {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* Apple Press Response - instantaneous 100ms (§1) */
+.apple-press {
+  transition: transform 120ms var(--ease-spring-snappy), opacity 120ms ease;
+}
+.apple-press:active {
+  transform: scale(0.965);
+  opacity: 0.92;
+}
+
+.apple-press-sm:active {
+  transform: scale(0.975);
+}
+
+/* Typography Optics (§15) */
+.display-title {
+  letter-spacing: -0.025em;
+  font-weight: 800;
+}
+
+.subheadline {
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* iOS Sheet Handle */
+.apple-sheet-handle {
+  width: 36px;
+  height: 4.5px;
+  border-radius: 9999px;
+  background: rgba(60, 60, 67, 0.28);
+  margin-left: auto;
+  margin-right: auto;
+  transition: background 150ms ease;
+}
+.apple-sheet-handle:hover {
+  background: rgba(60, 60, 67, 0.45);
+}
+
+/* Scrollbars */
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
@@ -45,42 +122,50 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.22);
 }
 
-/* Leaflet */
+/* Leaflet Apple Polish */
 .leaflet-container {
   width: 100%;
   height: 100%;
   z-index: 10;
-  background-color: #e8f0e8 !important;
+  background-color: #f5f5f7 !important;
+  font-family: inherit;
 }
 
 .leaflet-control-zoom {
   border: none !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
-  border-radius: 10px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+  border-radius: 12px !important;
   overflow: hidden;
+  backdrop-filter: blur(20px);
 }
 
 .leaflet-control-zoom a {
-  background-color: #ffffff !important;
-  color: #0f172a !important;
-  border-bottom: 1px solid #e2e8f0 !important;
-  font-weight: 600;
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  color: #1d1d1f !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+  font-weight: 500;
+  transition: background 120ms ease;
 }
 
 .leaflet-control-zoom a:hover {
-  background-color: #f1f5f9 !important;
+  background-color: #ffffff !important;
 }
 
 .leaflet-popup-content-wrapper {
-  background: #ffffff !important;
-  color: #0f172a !important;
-  border-radius: 14px !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
-  border: 1px solid #e2e8f0 !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  color: #1d1d1f !important;
+  border-radius: 18px !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
   padding: 0 !important;
   overflow: hidden;
 }
@@ -90,25 +175,33 @@ body {
   line-height: 1.4 !important;
 }
 
-.leaflet-popup-tip-container {
-  margin-top: -1px;
-}
-
 .leaflet-popup-tip {
-  background: #ffffff !important;
+  background: rgba(255, 255, 255, 0.94) !important;
   box-shadow: none !important;
 }
 
-/* Custom marker animations */
+/* Animations */
 @keyframes ping {
   75%, 100% {
-    transform: scale(2);
+    transform: scale(2.2);
     opacity: 0;
   }
 }
 
-@keyframes pulse-ring {
-  0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.5); }
-  70% { box-shadow: 0 0 0 10px rgba(22, 163, 74, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+/* Accessibility (§14) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .apple-glass, .apple-glass-card, .apple-glass-pill {
+    background: #ffffff !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
 }
