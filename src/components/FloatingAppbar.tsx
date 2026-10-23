@@ -30,41 +30,41 @@ export const FloatingAppbar: React.FC<FloatingAppbarProps> = ({
 
   const filters: { key: typeof activeFilter; label: string; color?: string }[] = [
     { key: "all", label: "Semua" },
-    { key: "green", label: "🟢 Segar" },
-    { key: "yellow", label: "🟡 Diskon" },
-    { key: "near", label: "⚡ < 5 km" },
+    { key: "green", label: "🟢 Segar (0-8j)" },
+    { key: "yellow", label: "🟡 Diskon 15% (8-10.5j)" },
+    { key: "near", label: "Dekat (< 5 km)" },
   ];
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 pointer-events-none">
       <div className="pointer-events-auto mx-3 mt-3 sm:mx-5 sm:mt-4 max-w-2xl lg:max-w-3xl xl:mx-auto">
-        {/* Main bar — white card like Bali Fuel Watch */}
-        <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_6px_24px_rgba(15,23,42,0.12)] border border-slate-200 px-3 py-2.5 sm:px-4">
+        {/* Main top bar card */}
+        <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-sm border border-slate-200 px-3.5 py-2.5 sm:px-4">
           {/* Main row */}
           <div className="flex items-center justify-between gap-3">
             {/* Brand */}
             <div className="flex items-center gap-2.5 shrink-0">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-green-600 to-emerald-400 flex items-center justify-center shadow-sm">
-                <Compass className="w-4 h-4 text-white" />
+              <div className="w-8 h-8 rounded-xl bg-emerald-800 text-white flex items-center justify-center shadow-xs">
+                <Compass className="w-4 h-4 text-emerald-100" />
               </div>
-              <div>
-                <span className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+              <div className="flex items-center">
+                <span className="text-base font-bold text-slate-900 tracking-tight">
                   Sirkula
                 </span>
-                <span className="ml-1.5 text-[9px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200 px-1.5 py-0.5 rounded">
-                  Beta
+                <span className="ml-2 text-[10px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
+                  Kliring Ampas Tahu
                 </span>
               </div>
             </div>
 
             {/* GPS Pill */}
-            <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-slate-500 bg-slate-50 border border-slate-200 rounded-full px-2.5 py-1">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
+            <div className="hidden sm:flex items-center gap-1.5 text-xs text-slate-700 bg-slate-50 border border-slate-200 rounded-full px-3 py-1">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
               </span>
-              <Navigation2 className="w-3 h-3" />
-              <span className="font-medium">GPS Aktif</span>
+              <Navigation2 className="w-3 h-3 text-emerald-700" />
+              <span className="font-semibold text-slate-800">GPS Denpasar</span>
             </div>
 
             {/* Right controls */}
@@ -72,10 +72,12 @@ export const FloatingAppbar: React.FC<FloatingAppbarProps> = ({
               {/* Filter toggle */}
               <button
                 onClick={() => setShowFilters((p) => !p)}
-                className={`text-[11px] font-semibold px-2.5 py-1.5 rounded-xl transition-all border ${
+                aria-label="Buka pilihan filter"
+                aria-expanded={showFilters}
+                className={`text-xs font-semibold px-3 py-2 rounded-xl transition-all border min-h-[40px] flex items-center justify-center focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-hidden ${
                   showFilters
-                    ? "bg-green-50 text-green-700 border-green-200"
-                    : "text-slate-500 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+                    ? "bg-emerald-50 text-emerald-900 border-emerald-300"
+                    : "text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
                 }`}
               >
                 Filter
@@ -84,17 +86,19 @@ export const FloatingAppbar: React.FC<FloatingAppbarProps> = ({
               {/* Factory list toggle */}
               <button
                 onClick={onToggleFactoryList}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                aria-label={isFactoryListOpen ? "Tutup panel daftar pabrik" : "Buka panel daftar pabrik"}
+                aria-expanded={isFactoryListOpen}
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all min-h-[40px] focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-hidden ${
                   isFactoryListOpen
-                    ? "bg-slate-900 text-white shadow-sm"
-                    : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200"
+                    ? "bg-slate-900 text-white shadow-xs"
+                    : "bg-slate-100 text-slate-800 hover:bg-slate-200 border border-slate-200"
                 }`}
               >
                 <Layers className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Pabrik</span>
-                <span className="font-bold">{factoriesCount}</span>
+                <span className="font-bold font-mono">{factoriesCount}</span>
                 <ChevronDown
-                  className={`w-3 h-3 transition-transform ${
+                  className={`w-3.5 h-3.5 transition-transform ${
                     isFactoryListOpen ? "rotate-180" : ""
                   }`}
                 />
@@ -104,15 +108,15 @@ export const FloatingAppbar: React.FC<FloatingAppbarProps> = ({
 
           {/* Collapsible filter chips */}
           {showFilters && (
-            <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-slate-100 overflow-x-auto scrollbar-none">
+            <div className="flex items-center gap-1.5 mt-2.5 pt-2.5 border-t border-slate-100 overflow-x-auto scrollbar-none">
               {filters.map((f) => (
                 <button
                   key={f.key}
                   onClick={() => onFilterChange(f.key)}
-                  className={`px-3 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap transition-all ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all min-h-[36px] focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-hidden ${
                     activeFilter === f.key
-                      ? "bg-slate-900 text-white"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200"
+                      ? "bg-emerald-800 text-white"
+                      : "text-slate-700 hover:text-slate-900 hover:bg-slate-100 border border-slate-200"
                   }`}
                 >
                   {f.label}

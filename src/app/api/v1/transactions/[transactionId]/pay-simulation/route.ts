@@ -14,7 +14,7 @@ interface RouteParams {
 /**
  * POST /api/v1/transactions/:transactionId/pay-simulation
  * Menandai pembayaran transaksi menggunakan saldo simulasi (khusus role 'farmer').
- * SIMULASI SAJA — Tidak memindahkan dana sungguhan.
+ * SIMULASI SAJA: Tidak memindahkan dana sungguhan.
  */
 export async function POST(req: NextRequest, { params }: RouteParams) {
   try {

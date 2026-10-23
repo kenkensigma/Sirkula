@@ -10,8 +10,8 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Sirkula — Radar Ampas Tahu & Pakan Ternak Segar",
-  description: "Platform sirkularitas ampas tahu segar dengan jaminan SLA 12 jam, radius 15 km, dan Rekening Bersama Escrow.",
+  title: "Sirkula: Radar Ampas Tahu & Pakan Ternak Segar",
+  description: "Platform kliring ampas tahu segar dengan jaminan batas kesegaran 12 jam, radius 15 km, dan Rekening Bersama Escrow simulasi.",
 };
 
 export default function RootLayout({

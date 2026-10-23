@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ActiveOrder } from "./OrderDrawer";
 import { 
   X, 
@@ -8,7 +8,6 @@ import {
   AlertTriangle, 
   CheckCircle2, 
   Truck, 
-  ArrowRight,
   Copy,
   Check
 } from "lucide-react";
@@ -30,6 +29,16 @@ export const EscrowVerificationModal: React.FC<EscrowVerificationModalProps> = (
   const [simulatedInputPin, setSimulatedInputPin] = useState("");
   const [pinError, setPinError] = useState(false);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
   if (!isOpen || !order) return null;
 
   const handleCopyPin = () => {
@@ -50,20 +59,20 @@ export const EscrowVerificationModal: React.FC<EscrowVerificationModalProps> = (
   const isSettled = order.status === "DELIVERED_SETTLED";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/40 backdrop-blur-sm">
       <div 
-        className="w-full max-w-md bg-white border border-slate-200 rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col animate-in slide-in-from-bottom duration-300"
+        className="w-full max-w-md bg-white border border-slate-200 rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-10">
+        <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-white sticky top-0 z-10">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-green-50 border border-green-200 flex items-center justify-center text-green-700">
+            <div className="w-8 h-8 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-800">
               <ShieldCheck className="w-4 h-4" />
             </div>
             <div>
-              <span className="text-[11px] font-bold text-green-700 uppercase tracking-wider block">
-                {isSettled ? "Transaksi Tuntas" : "Dana Dikunci di Escrow"}
+              <span className="text-xs font-semibold text-emerald-800 block">
+                {isSettled ? "Transaksi Tuntas" : "Dana Ditahan di Escrow"}
               </span>
               <h3 className="font-bold text-slate-900 text-sm">
                 No. Pesanan: {order.id}
@@ -72,7 +81,8 @@ export const EscrowVerificationModal: React.FC<EscrowVerificationModalProps> = (
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 transition-colors"
+            aria-label="Tutup modal verifikasi escrow"
+            className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition-colors focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-hidden"
           >
             <X className="w-4 h-4" />
           </button>
@@ -99,22 +109,22 @@ export const EscrowVerificationModal: React.FC<EscrowVerificationModalProps> = (
             </div>
           ) : (
             <>
-              {/* Mandatory UX Warning Box according to PDF specs */}
-              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3.5 flex items-start gap-3 shadow-sm">
-                <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+              {/* Mandatory inspection warning box */}
+              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3.5 flex items-start gap-3 shadow-2xs">
+                <AlertTriangle className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
                 <div className="text-xs">
-                  <p className="font-bold text-amber-900 text-xs">
-                    Peringatan Pemeriksaan Lapangan
+                  <p className="font-bold text-amber-950">
+                    Peringatan Pemeriksaan Fisik di Lokasi
                   </p>
-                  <p className="text-amber-800 text-[11px] mt-0.5 leading-relaxed">
-                    Cek bau &amp; kesegaran ampas tahu terlebih dahulu sebelum menunjukkan QR / PIN ini ke kurir saat barang tiba.
+                  <p className="text-amber-900 text-xs mt-1 leading-relaxed">
+                    Periksa bau gurih alami dan kehangatan ampas tahu terlebih dahulu sebelum menunjukkan QR atau PIN ini ke kurir saat barang tiba.
                   </p>
                 </div>
               </div>
 
               {/* QR Code Presentation Box */}
-              <div className="bg-white rounded-3xl p-5 text-center shadow-md flex flex-col items-center max-w-[280px] mx-auto border border-slate-200">
-                <div className="p-3 bg-white rounded-2xl border border-slate-100">
+              <div className="bg-white rounded-3xl p-5 text-center shadow-xs flex flex-col items-center max-w-[280px] mx-auto border border-slate-200">
+                <div className="p-3 bg-white rounded-2xl border border-slate-200">
                   {/* SVG QR Code Simulation */}
                   <svg
                     className="w-44 h-44 text-slate-900"
@@ -163,68 +173,70 @@ export const EscrowVerificationModal: React.FC<EscrowVerificationModalProps> = (
                   </svg>
                 </div>
 
-                <span className="text-[11px] text-slate-500 font-semibold mt-2">
-                  Tunjukkan ke kurir untuk scan
+                <span className="text-xs text-slate-700 font-semibold mt-2.5">
+                  Tunjukkan ke kurir untuk scan saat ampas tiba segar
                 </span>
               </div>
 
               {/* 6-Digit PIN Display & Backup Input */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-3.5 text-center space-y-2 shadow-sm">
-                <span className="text-xs text-slate-600 block">
+              <div className="bg-white border border-slate-200 rounded-2xl p-3.5 text-center space-y-2 shadow-2xs">
+                <span className="text-xs text-slate-700 block font-medium">
                   Atau sebutkan 6 Digit PIN Serah-Terima:
                 </span>
                 <div className="flex items-center justify-center gap-2">
-                  <div className="font-mono text-2xl font-black tracking-widest text-slate-900 bg-slate-50 px-4 py-1.5 rounded-xl border border-slate-300 shadow-inner">
+                  <div className="font-mono text-2xl font-black tracking-widest text-slate-900 bg-slate-50 px-4 py-2 rounded-xl border border-slate-300">
                     {order.pin6Digit}
                   </div>
                   <button
                     onClick={handleCopyPin}
-                    className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors border border-slate-200"
+                    aria-label="Salin PIN 6 Digit"
+                    className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors border border-slate-200 min-h-[44px] min-w-[44px] flex items-center justify-center focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-hidden"
                     title="Salin PIN"
                   >
-                    {copied ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
+                    {copied ? <Check className="w-4 h-4 text-emerald-700" /> : <Copy className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
 
               {/* Kurir Verification Field Simulation */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-3.5 space-y-2 shadow-sm">
+              <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-2.5 shadow-2xs">
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-bold text-slate-900 flex items-center gap-1.5">
-                    <Truck className="w-3.5 h-3.5 text-green-600" />
+                    <Truck className="w-4 h-4 text-emerald-700" />
                     Simulasi Verifikasi Kurir di Lapangan
                   </span>
-                  <span className="text-[10px] bg-slate-100 text-slate-600 border border-slate-200 px-1.5 py-0.5 rounded font-bold">
-                    Demo
+                  <span className="text-[11px] bg-slate-100 text-slate-800 border border-slate-300 px-2 py-0.5 rounded-md font-semibold">
+                    Simulasi Lapangan
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-500">
-                  Ketik PIN 6 digit peternak untuk mensimulasikan kurir mengonfirmasi barang telah tiba segar:
+                <p className="text-xs text-slate-600">
+                  Ketik PIN 6 digit peternak untuk mensimulasikan konfirmasi kurir bahwa ampas telah tiba dalam kondisi segar:
                 </p>
 
                 <div className="flex gap-2">
                   <input
                     type="text"
                     maxLength={6}
-                    placeholder="Ketik PIN di atas"
+                    placeholder="Ketik 6 digit PIN"
                     value={simulatedInputPin}
+                    aria-label="Input PIN 6 Digit Simulasi Kurir"
                     onChange={(e) => {
                       setSimulatedInputPin(e.target.value);
                       setPinError(false);
                     }}
-                    className="flex-1 bg-slate-50 border border-slate-300 focus:border-green-600 focus:bg-white rounded-xl px-3 py-2 text-sm text-slate-900 font-mono placeholder:text-slate-400 focus:outline-none transition-colors"
+                    className="flex-1 bg-slate-50 border border-slate-300 focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700 focus:bg-white rounded-xl px-3 py-2 text-sm text-slate-900 font-mono placeholder:text-slate-500 focus:outline-hidden transition-colors"
                   />
                   <button
                     onClick={handleVerify}
-                    className="bg-green-600 hover:bg-green-700 text-white font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1 transition-colors shadow-sm"
+                    aria-label="Konfirmasi pencairan dana escrow"
+                    className="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center justify-center transition-colors shadow-xs min-h-[40px] focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-hidden active:scale-95"
                   >
                     <span>Cairkan Escrow</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
                 {pinError && (
-                  <p className="text-[11px] text-rose-600 font-semibold">
-                    PIN tidak cocok dengan PIN transaksi {order.pin6Digit}. Coba lagi.
+                  <p className="text-xs text-rose-700 font-semibold mt-1">
+                    PIN tidak cocok dengan PIN transaksi {order.pin6Digit}. Silakan coba lagi.
                   </p>
                 )}
               </div>
@@ -232,22 +244,22 @@ export const EscrowVerificationModal: React.FC<EscrowVerificationModalProps> = (
           )}
 
           {/* Transaction Summary Card */}
-          <div className="bg-white rounded-xl p-3 text-xs border border-slate-200 space-y-1.5 shadow-sm">
-            <div className="flex justify-between text-slate-500">
+          <div className="bg-white rounded-xl p-3.5 text-xs border border-slate-200 space-y-2 shadow-2xs">
+            <div className="flex justify-between text-slate-700">
               <span>Pabrik Penyedia:</span>
               <strong className="text-slate-900">{order.factoryName}</strong>
             </div>
-            <div className="flex justify-between text-slate-500">
+            <div className="flex justify-between text-slate-700">
               <span>Item:</span>
-              <span className="text-slate-800">{order.itemName}</span>
+              <span className="text-slate-900">{order.itemName}</span>
             </div>
-            <div className="flex justify-between text-slate-500">
+            <div className="flex justify-between text-slate-700">
               <span>Total Volume:</span>
-              <span className="text-slate-800">{order.sacksCount} Karung ({order.totalKg} kg)</span>
+              <span className="text-slate-900 font-medium">{order.sacksCount} Karung ({order.totalKg} kg)</span>
             </div>
-            <div className="flex justify-between text-slate-500 pt-1 border-t border-slate-100">
+            <div className="flex justify-between text-slate-700 pt-2 border-t border-slate-100">
               <span>Total Dana Escrow:</span>
-              <span className="font-extrabold text-green-700 font-mono text-sm">
+              <span className="font-bold text-emerald-800 font-mono text-sm">
                 Rp {order.totalAmount.toLocaleString("id-ID")}
               </span>
             </div>

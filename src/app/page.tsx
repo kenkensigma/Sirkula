@@ -20,7 +20,7 @@ import {
   ShieldCheck, 
   Layers, 
   X, 
-  Sparkles
+  Leaf
 } from "lucide-react";
 
 export default function Home() {
@@ -185,14 +185,15 @@ export default function Home() {
                       <h3 className="font-bold text-sm text-slate-900">
                         Pabrik Ampas Tahu
                       </h3>
-                      <p className="text-[11px] text-slate-400">
+                      <p className="text-[11px] text-slate-600">
                         {filteredFactories.length} lokasi • radius 15 km
                       </p>
                     </div>
                     <button
                       onClick={() => setIsFactoryListOpen(false)}
-                      className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                      className="p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-hidden"
                       title="Tutup Panel"
+                      aria-label="Tutup panel daftar pabrik"
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -201,15 +202,15 @@ export default function Home() {
                   {/* Panel List */}
                   <div className="flex-1 overflow-y-auto px-3 py-2 space-y-1.5">
                     {filteredFactories.length === 0 ? (
-                      <div className="p-8 text-center text-slate-400 text-sm">
-                        Tidak ada pabrik yang sesuai filter.
+                      <div className="p-8 text-center text-slate-600 text-sm">
+                        Tidak ada pabrik yang sesuai dengan kriteria filter saat ini.
                       </div>
                     ) : (
                       filteredFactories.map((factory) => (
                         <FactoryCard
                           key={factory.id}
                           factory={factory}
-                          isSelected={selectedFactory?.id === factory.id}
+                          isSelected={false}
                           onSelect={(fac) => setSelectedFactory(fac)}
                           onOrder={(fac) => setOrderModalFactory(fac)}
                         />
@@ -261,14 +262,17 @@ export default function Home() {
           </div>
 
           {orders.length === 0 ? (
-            <div className="text-center py-16 space-y-3 text-slate-400">
-              <ShieldCheck className="w-8 h-8 text-slate-300 mx-auto" />
-              <p className="text-sm text-slate-400">Belum ada pesanan</p>
+            <div className="text-center py-16 space-y-3 text-slate-600 bg-white border border-slate-200 rounded-2xl p-6">
+              <ShieldCheck className="w-10 h-10 text-emerald-600 mx-auto" />
+              <p className="text-sm font-medium text-slate-700">Belum ada pesanan aktif</p>
+              <p className="text-xs text-slate-500 max-w-xs mx-auto">
+                Pilih pabrik tahu dari peta radar atau katalog untuk memesan ampas segar dengan jaminan escrow.
+              </p>
               <button
                 onClick={() => setActiveTab("map")}
-                className="text-xs text-green-700 font-semibold hover:underline"
+                className="text-xs text-emerald-800 bg-emerald-50 hover:bg-emerald-100 font-semibold px-4 py-2 rounded-xl transition-colors border border-emerald-200 focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-hidden"
               >
-                Buka Peta →
+                Buka Peta Radar
               </button>
             </div>
           ) : (
@@ -276,18 +280,27 @@ export default function Home() {
               {orders.map((ord) => (
                 <div
                   key={ord.id}
+                  role="button"
+                  tabIndex={0}
                   onClick={() => setActiveOrderForModal(ord)}
-                  className="bg-white border border-slate-200 rounded-xl p-3.5 cursor-pointer hover:border-green-300 hover:shadow-sm transition-all"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setActiveOrderForModal(ord);
+                    }
+                  }}
+                  className="bg-white border border-slate-200 rounded-xl p-3.5 cursor-pointer hover:border-emerald-300 hover:shadow-xs transition-all focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-hidden"
+                  aria-label={`Buka detail verifikasi pesanan ${ord.id} dari ${ord.factoryName}`}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-[11px] font-mono text-slate-400">
+                    <span className="text-[11px] font-mono text-slate-600">
                       {ord.id}
                     </span>
                     <span
-                      className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
+                      className={`text-[10px] font-semibold px-2 py-0.5 rounded-md ${
                         ord.status === "DELIVERED_SETTLED"
-                          ? "text-slate-500 bg-slate-100"
-                          : "text-green-800 bg-green-100"
+                          ? "text-slate-700 bg-slate-100 border border-slate-200"
+                          : "text-emerald-900 bg-emerald-100 border border-emerald-200"
                       }`}
                     >
                       {ord.status === "DELIVERED_SETTLED" ? "Selesai" : "Escrow Aktif"}
@@ -297,12 +310,12 @@ export default function Home() {
                   <h4 className="font-semibold text-sm text-slate-900">
                     {ord.factoryName}
                   </h4>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    {ord.sacksCount} karung • {ord.totalKg} kg
+                  <p className="text-xs text-slate-600 mt-0.5">
+                    {ord.sacksCount} karung ({ord.totalKg} kg)
                   </p>
 
                   <div className="flex items-center justify-between mt-2.5 pt-2 border-t border-slate-100 text-xs">
-                    <span className="text-slate-400">Total</span>
+                    <span className="text-slate-600">Total Nominal</span>
                     <span className="font-bold text-slate-900 font-mono">
                       Rp {ord.totalAmount.toLocaleString("id-ID")}
                     </span>
@@ -318,21 +331,22 @@ export default function Home() {
       {activeTab === "sdg" && (
         <main className="flex-1 overflow-y-auto pt-20 pb-16 px-4 sm:px-6 max-w-2xl mx-auto w-full bg-slate-50">
           <div className="text-center py-12 space-y-4">
-            <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">
-              SDGs 12 & 13
+            <span className="text-xs font-semibold text-emerald-900 bg-emerald-100 border border-emerald-200 px-3 py-1 rounded-full inline-block">
+              Target Sirkularitas SDG 12 &amp; 13
             </span>
             <h2 className="text-xl font-bold text-slate-900">
-              Dampak Sirkularitas
+              Dampak Sirkularitas Ampas Tahu
             </h2>
-            <p className="text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
-              Menyelamatkan limbah ampas tahu dari pembuangan, mencegah emisi metana, dan menghemat biaya pakan ternak.
+            <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+              Menyelamatkan limbah ampas tahu dari pembuangan liar ke sungai, mencegah pembentukan gas metana, dan menghemat biaya pakan ternak rakyat.
             </p>
             <button
               onClick={() => setIsSDGModalOpen(true)}
-              className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-5 rounded-xl text-sm transition-colors inline-flex items-center gap-2"
+              className="bg-emerald-700 hover:bg-emerald-800 text-white font-semibold py-2.5 px-5 rounded-xl text-sm transition-colors inline-flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-hidden"
+              aria-label="Buka ringkasan dampak lingkungan dan SDG"
             >
-              <Sparkles className="w-4 h-4" />
-              Lihat Detail
+              <Leaf className="w-4 h-4 text-emerald-200" />
+              <span>Lihat Rincian Dampak</span>
             </button>
           </div>
         </main>

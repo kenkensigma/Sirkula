@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FactoryLocation, USER_FARMER_LOCATION } from "@/data/mockFactories";
 import { calculateHaversineDistance, formatDistanceDisplay } from "@/lib/geo/haversine";
 import { 
@@ -9,9 +9,10 @@ import {
   Truck, 
   Store, 
   Clock, 
-  Sparkles, 
-  Lock, 
-  ArrowRight
+  Leaf, 
+  Lock,
+  Minus,
+  Plus
 } from "lucide-react";
 
 export interface ActiveOrder {
@@ -50,6 +51,16 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
   const [sacks, setSacks] = useState<number>(3);
   const [deliveryMethod, setDeliveryMethod] = useState<"delivery" | "pickup">("delivery");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
 
   if (!isOpen || !factory) return null;
 
@@ -97,16 +108,16 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/40 backdrop-blur-sm">
       <div
-        className="w-full max-w-lg bg-white rounded-t-3xl sm:rounded-3xl overflow-hidden max-h-[92vh] flex flex-col animate-in slide-in-from-bottom duration-300 shadow-2xl"
+        className="w-full max-w-lg bg-white rounded-t-3xl sm:rounded-3xl overflow-hidden max-h-[92vh] flex flex-col shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="px-5 py-4 flex items-center justify-between bg-white sticky top-0 z-10 border-b border-slate-100">
           <div>
-            <div className="flex items-center gap-1.5 text-xs text-green-700 font-semibold mb-0.5">
-              <ShieldCheck className="w-4 h-4" />
+            <div className="flex items-center gap-1.5 text-xs text-emerald-800 font-semibold mb-0.5">
+              <ShieldCheck className="w-4 h-4 text-emerald-700" />
               <span>Checkout Aman Sirkula Escrow</span>
             </div>
             <h3 className="font-bold text-slate-900 text-base leading-tight">
@@ -115,7 +126,8 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 transition-colors"
+            aria-label="Tutup formulir pesanan"
+            className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition-colors focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-hidden"
           >
             <X className="w-4 h-4" />
           </button>
@@ -124,56 +136,58 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
         {/* Scrollable Content */}
         <div className="p-4 space-y-3 overflow-y-auto bg-slate-50">
           {/* Freshness SLA Reminder */}
-          <div className="bg-green-50 border border-green-200 rounded-xl p-3 flex items-start gap-2.5">
-            <Clock className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
+          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3.5 flex items-start gap-2.5">
+            <Clock className="w-4 h-4 text-emerald-700 mt-0.5 shrink-0" />
             <div className="text-xs">
-              <p className="font-bold text-green-800">
+              <p className="font-bold text-emerald-950">
                 Jaminan Kesegaran SLA 12 Jam
               </p>
-              <p className="text-green-700/80 text-[11px] mt-0.5">
+              <p className="text-emerald-900 text-xs mt-0.5 leading-relaxed">
                 Ampas tahu baru dimasak &amp; pres pagi ini. Jarak pengiriman hanya{" "}
-                <strong className="text-green-800">{formattedDistance} km</strong>{" "}
-                (~{Math.round(distance * 3)} menit), aman sebelum fermentasi asam.
+                <strong className="text-emerald-950 font-bold">{formattedDistance} km</strong>{" "}
+                (~{Math.round(distance * 3)} menit), aman sebelum fase fermentasi.
               </p>
             </div>
           </div>
 
           {/* Sacks Counter */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-3">
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-3 shadow-2xs">
             <div className="flex items-center justify-between">
               <div>
-                <label className="text-xs font-bold text-slate-800 block">
+                <label className="text-xs font-bold text-slate-900 block">
                   Jumlah Karung Dipesan
                 </label>
-                <span className="text-[11px] text-slate-500">
+                <span className="text-xs text-slate-600">
                   1 karung = {factory.activeBatch.weightPerSackKg} kg ampas tahu
                 </span>
               </div>
               {/* Counter buttons */}
-              <div className="flex items-center gap-3 bg-slate-100 px-3 py-1.5 rounded-xl">
+              <div className="flex items-center gap-3 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
                 <button
                   type="button"
+                  aria-label="Kurangi jumlah karung"
                   onClick={() => setSacks((prev) => Math.max(1, prev - 1))}
-                  className="w-7 h-7 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold flex items-center justify-center text-base shadow-sm"
+                  className="w-8 h-8 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-slate-800 font-bold flex items-center justify-center shadow-xs focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-hidden active:scale-95"
                 >
-                  -
+                  <Minus className="w-3.5 h-3.5" />
                 </button>
-                <span className="font-extrabold text-slate-900 text-lg min-w-[24px] text-center font-mono">
+                <span className="font-extrabold text-slate-900 text-lg min-w-[28px] text-center font-mono">
                   {sacks}
                 </span>
                 <button
                   type="button"
+                  aria-label="Tambah jumlah karung"
                   onClick={() =>
                     setSacks((prev) => Math.min(factory.activeBatch.availableSacks, prev + 1))
                   }
-                  className="w-7 h-7 rounded-lg bg-green-600 hover:bg-green-700 text-white font-bold flex items-center justify-center text-base shadow-sm"
+                  className="w-8 h-8 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-bold flex items-center justify-center shadow-xs focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-hidden active:scale-95"
                 >
-                  +
+                  <Plus className="w-3.5 h-3.5" />
                 </button>
               </div>
             </div>
             <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
-              <span className="text-slate-500">Total Berat:</span>
+              <span className="text-slate-600 font-medium">Total Berat:</span>
               <span className="font-bold text-slate-900">{totalKg} kg ampas segar</span>
             </div>
           </div>
@@ -250,35 +264,35 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
           {/* SDG Impact */}
           <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex items-center justify-between text-xs">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-emerald-600" />
+              <Leaf className="w-4 h-4 text-emerald-700 shrink-0" />
               <div>
-                <span className="text-[11px] text-emerald-800 font-bold block">
+                <span className="text-xs text-emerald-950 font-bold block">
                   Kontribusi SDG 12 &amp; 13
                 </span>
-                <span className="text-[10px] text-emerald-600">
-                  Cegah {co2eSaved} kg CO2e • Hemat pakan ~Rp {feedSavings.toLocaleString("id-ID")}
+                <span className="text-xs text-emerald-800">
+                  Cegah {co2eSaved} kg CO2e • Hemat pakan ternak ~Rp {feedSavings.toLocaleString("id-ID")}
                 </span>
               </div>
             </div>
           </div>
 
           {/* Cost Summary */}
-          <div className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-1.5 text-xs">
-            <div className="flex items-center justify-between text-slate-500">
+          <div className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-2 text-xs shadow-2xs">
+            <div className="flex items-center justify-between text-slate-700">
               <span>Subtotal ({sacks} karung x Rp {factory.activeBatch.pricePerSackIdr.toLocaleString("id-ID")})</span>
-              <span className="text-slate-800">Rp {subtotal.toLocaleString("id-ID")}</span>
+              <span className="text-slate-900 font-medium">Rp {subtotal.toLocaleString("id-ID")}</span>
             </div>
-            <div className="flex items-center justify-between text-slate-500">
+            <div className="flex items-center justify-between text-slate-700">
               <span>Ongkir Jarak ({formattedDistance} km)</span>
-              <span className="text-slate-800">{shippingFee === 0 ? "Gratis" : `Rp ${shippingFee.toLocaleString("id-ID")}`}</span>
+              <span className="text-slate-900 font-medium">{shippingFee === 0 ? "Gratis" : `Rp ${shippingFee.toLocaleString("id-ID")}`}</span>
             </div>
-            <div className="flex items-center justify-between text-slate-500">
+            <div className="flex items-center justify-between text-slate-700">
               <span>Biaya Layanan Escrow &amp; QR</span>
-              <span className="text-slate-800">Rp {platformFee.toLocaleString("id-ID")}</span>
+              <span className="text-slate-900 font-medium">Rp {platformFee.toLocaleString("id-ID")}</span>
             </div>
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-sm font-extrabold text-slate-900">
+            <div className="pt-2.5 border-t border-slate-200 flex items-center justify-between text-sm font-bold text-slate-900">
               <span>Total Pembayaran Escrow</span>
-              <span className="text-green-700 text-base font-mono">
+              <span className="text-emerald-800 text-base font-mono font-bold">
                 Rp {totalAmount.toLocaleString("id-ID")}
               </span>
             </div>
@@ -286,23 +300,23 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-slate-100 bg-white sticky bottom-0 z-10">
+        <div className="p-4 border-t border-slate-200 bg-white sticky bottom-0 z-10">
           <button
             type="button"
             disabled={isSubmitting}
             onClick={handleConfirmOrder}
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-2xl text-sm transition-colors flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50 shadow-md shadow-green-200"
+            aria-label={`Konfirmasi pembayaran dan kunci stok Rp ${totalAmount.toLocaleString("id-ID")}`}
+            className="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3.5 rounded-xl text-sm transition-colors flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50 min-h-[48px] focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-hidden shadow-xs"
           >
             {isSubmitting ? (
               <span className="flex items-center gap-2">
                 <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                Mengunci Stok di Escrow...
+                <span>Mengunci Stok di Escrow...</span>
               </span>
             ) : (
               <span className="flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4" />
-                Bayar &amp; Kunci Stok Sekarang (Rp {totalAmount.toLocaleString("id-ID")})
-                <ArrowRight className="w-4 h-4" />
+                <span>Bayar &amp; Kunci Stok Sekarang (Rp {totalAmount.toLocaleString("id-ID")})</span>
               </span>
             )}
           </button>

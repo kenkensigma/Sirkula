@@ -5,7 +5,7 @@ import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from "react-le
 import L from "leaflet";
 import { FactoryLocation, USER_FARMER_LOCATION } from "@/data/mockFactories";
 import { calculateHaversineDistance, formatDistanceDisplay } from "@/lib/geo/haversine";
-import { ShieldCheck, ArrowRight } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 
 interface MapViewProps {
   factories: FactoryLocation[];
@@ -168,14 +168,14 @@ export const MapView: React.FC<MapViewProps> = ({
         >
           <Popup className="custom-popup">
             <div className="p-3 text-slate-800">
-              <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider block">
+              <span className="text-xs font-semibold text-emerald-800 block">
                 Titik GPS Peternak
               </span>
               <h4 className="font-bold text-sm text-slate-900 mt-0.5">{USER_FARMER_LOCATION.name}</h4>
-              <p className="text-[11px] text-slate-500 mt-1">
+              <p className="text-xs text-slate-600 mt-1">
                 {USER_FARMER_LOCATION.address}
               </p>
-              <p className="text-[10px] text-slate-400 font-mono mt-1">
+              <p className="text-xs text-slate-600 font-mono mt-1">
                 Radius Radar: {USER_FARMER_LOCATION.maxRadiusKm} KM
               </p>
             </div>
@@ -201,42 +201,47 @@ export const MapView: React.FC<MapViewProps> = ({
               }}
             >
               <Popup className="custom-popup">
-                <div className="p-3 text-slate-800 min-w-[210px]">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.2 rounded">
+                <div className="p-3 text-slate-800 min-w-[220px]">
+                  <div className="flex items-center justify-between mb-1.5 gap-2">
+                    <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-md border ${
+                      factory.activeBatch.freshnessZone === "green"
+                        ? "text-emerald-900 bg-emerald-50 border-emerald-200"
+                        : "text-amber-900 bg-amber-50 border-amber-200"
+                    }`}>
                       {factory.activeBatch.freshnessZone === "green" ? "🟢 Segar Prima" : "🟡 Diskon 15%"}
                     </span>
-                    <span className="text-[11px] font-semibold text-slate-500">
+                    <span className="text-xs font-medium text-slate-600 shrink-0">
                       {formattedDistance} km
                     </span>
                   </div>
 
                   <h4 className="font-bold text-sm text-slate-900">{factory.name}</h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
+                  <p className="text-xs text-slate-600 mt-0.5">
                     {factory.activeBatch.itemName}
                   </p>
 
-                  <div className="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-                    <span className="text-slate-500">Stok:</span>
+                  <div className="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-700">
+                    <span>Stok:</span>
                     <span className="font-bold text-slate-900">
                       {factory.activeBatch.availableSacks} karung
                     </span>
                   </div>
 
-                  <div className="mt-1 flex items-center justify-between text-xs">
-                    <span className="text-slate-500">Harga:</span>
-                    <span className="font-bold text-emerald-700 font-mono">
+                  <div className="mt-1 flex items-center justify-between text-xs text-slate-700">
+                    <span>Harga:</span>
+                    <span className="font-bold text-emerald-800 font-mono">
                       Rp {factory.activeBatch.pricePerSackIdr.toLocaleString("id-ID")}
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-1.5 mt-3">
+                  <div className="grid grid-cols-2 gap-2 mt-3">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         onSelectFactory(factory);
                       }}
-                      className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-1.5 rounded-lg text-xs transition-colors text-center border border-slate-200"
+                      aria-label={`Lihat detail ${factory.name}`}
+                      className="bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold py-2 rounded-lg text-xs transition-colors text-center border border-slate-200 min-h-[38px] flex items-center justify-center focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-hidden"
                     >
                       Detail
                     </button>
@@ -245,10 +250,11 @@ export const MapView: React.FC<MapViewProps> = ({
                         e.stopPropagation();
                         onOrderFactory(factory);
                       }}
-                      className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-1.5 rounded-lg text-xs transition-colors flex items-center justify-center gap-1 shadow-2xs"
+                      aria-label={`Pesan ampas dari ${factory.name}`}
+                      className="bg-emerald-700 hover:bg-emerald-800 text-white font-semibold py-2 rounded-lg text-xs transition-colors flex items-center justify-center gap-1.5 shadow-2xs min-h-[38px] focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:outline-hidden active:scale-95"
                     >
                       <ShieldCheck className="w-3.5 h-3.5" />
-                      Pesan
+                      <span>Pesan</span>
                     </button>
                   </div>
                 </div>
