@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { Compass, Layers, ChevronDown, SlidersHorizontal } from "lucide-react";
+import Link from "next/link";
+import { Compass, Layers, ChevronDown, SlidersHorizontal, LogIn } from "lucide-react";
 import { NavTab } from "./BottomAppbar";
 
 interface FloatingAppbarProps {
@@ -98,6 +99,16 @@ export const FloatingAppbar: React.FC<FloatingAppbarProps> = ({
                   }`}
                 />
               </button>
+
+              {/* Login Link */}
+              <Link
+                href="/login"
+                className="apple-press flex items-center gap-1.5 px-3 py-1.5 min-h-[40px] rounded-xl text-xs font-semibold bg-white text-[#04261C] hover:bg-[#F2F7F4] border border-[#DDE7E2] shadow-2xs focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
+                aria-label="Masuk ke Akun Sirkula"
+              >
+                <LogIn className="w-3.5 h-3.5 text-[#0A4D3C]" />
+                <span className="hidden sm:inline">Masuk</span>
+              </Link>
             </div>
           </div>
 
