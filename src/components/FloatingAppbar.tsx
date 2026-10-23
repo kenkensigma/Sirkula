@@ -2,8 +2,9 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Compass, Layers, ChevronDown, SlidersHorizontal, LogIn } from "lucide-react";
+import { Compass, Layers, ChevronDown, SlidersHorizontal, LogIn, UserPlus, LogOut } from "lucide-react";
 import { NavTab } from "./BottomAppbar";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface FloatingAppbarProps {
   isFactoryListOpen: boolean;
@@ -27,6 +28,7 @@ export const FloatingAppbar: React.FC<FloatingAppbarProps> = ({
   activeFilter,
   onFilterChange,
 }) => {
+  const { user, isAuthenticated, logout } = useAuth();
   const [showFilters, setShowFilters] = useState(false);
 
   const filters: { key: typeof activeFilter; label: string; dot?: string }[] = [
@@ -100,15 +102,51 @@ export const FloatingAppbar: React.FC<FloatingAppbarProps> = ({
                 />
               </button>
 
-              {/* Login Link */}
-              <Link
-                href="/login"
-                className="apple-press flex items-center gap-1.5 px-3 py-1.5 min-h-[40px] rounded-xl text-xs font-semibold bg-white text-[#04261C] hover:bg-[#F2F7F4] border border-[#DDE7E2] shadow-2xs focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
-                aria-label="Masuk ke Akun Sirkula"
-              >
-                <LogIn className="w-3.5 h-3.5 text-[#0A4D3C]" />
-                <span className="hidden sm:inline">Masuk</span>
-              </Link>
+              {/* Auth Status & Login CTA */}
+              {!isAuthenticated ? (
+                <>
+                  <Link
+                    href="/login"
+                    className="apple-press flex items-center gap-1.5 px-3.5 py-1.5 min-h-[40px] rounded-xl text-xs font-bold bg-[#0A4D3C] text-white hover:bg-[#063125] shadow-xs transition-colors focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
+                    aria-label="Masuk ke Akun Sirkula"
+                  >
+                    <LogIn className="w-3.5 h-3.5" />
+                    <span>Masuk</span>
+                  </Link>
+
+                  <Link
+                    href="/register"
+                    className="apple-press hidden sm:flex items-center gap-1.5 px-3 py-1.5 min-h-[40px] rounded-xl text-xs font-semibold bg-white text-[#04261C] hover:bg-[#F2F7F4] border border-[#DDE7E2] shadow-2xs transition-colors focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
+                    aria-label="Daftar Akun Baru"
+                  >
+                    <UserPlus className="w-3.5 h-3.5 text-[#0A4D3C]" />
+                    <span>Daftar</span>
+                  </Link>
+                </>
+              ) : (
+                <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 bg-[#F2F7F4] border border-[#DDE7E2] px-2.5 py-1.5 rounded-xl text-xs">
+                    <div className="w-5 h-5 rounded-full bg-[#0A4D3C] text-white flex items-center justify-center font-bold text-[10px]">
+                      {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
+                    </div>
+                    <span className="font-bold text-[#04261C] max-w-[85px] sm:max-w-[120px] truncate">
+                      {user?.name || "Pengguna"}
+                    </span>
+                    <span className="hidden md:inline text-[10px] text-[#0A4D3C] font-semibold bg-white px-1.5 py-0.5 rounded border border-[#DDE7E2]">
+                      {user?.role === "factory" ? "Pabrik" : "Peternak"}
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={() => logout()}
+                    title="Keluar dari akun"
+                    aria-label="Keluar dari akun"
+                    className="apple-press p-2 min-h-[40px] min-w-[40px] rounded-xl text-[#4A6359] hover:text-[#DC2626] hover:bg-rose-50 border border-transparent hover:border-rose-200 transition-colors flex items-center justify-center focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 

@@ -15,6 +15,8 @@ import {
   USER_FARMER_LOCATION 
 } from "@/data/mockFactories";
 import { calculateHaversineDistance } from "@/lib/geo/haversine";
+import { useAuth } from "@/contexts/AuthContext";
+import { AuthRequiredModal } from "@/components/auth/AuthRequiredModal";
 import { 
   Navigation, 
   ShieldCheck, 
@@ -38,6 +40,16 @@ export default function Home() {
   const [orders, setOrders] = useState<ActiveOrder[]>([]);
   const [activeOrderForModal, setActiveOrderForModal] = useState<ActiveOrder | null>(null);
   const [isSDGModalOpen, setIsSDGModalOpen] = useState<boolean>(false);
+
+  // Authentication gate for transactions & sensitive actions
+  const { requireAuth, isAuthModalOpen, closeAuthModal, authModalActionDescription } = useAuth();
+
+  const handleOrderFactory = (fac: FactoryLocation) => {
+    if (!requireAuth("memesan ampas tahu dan mengunci dana di Rekening Bersama Escrow")) {
+      return;
+    }
+    setOrderModalFactory(fac);
+  };
 
   // Filter factories based on selected filter
   const filteredFactories = useMemo(() => {
@@ -136,7 +148,7 @@ export default function Home() {
                   setSelectedFactory(fac);
                   setIsFactoryListOpen(true);
                 }}
-                onOrderFactory={(fac) => setOrderModalFactory(fac)}
+                onOrderFactory={handleOrderFactory}
                 isRadiusCircleVisible={isRadiusCircleVisible}
               />
             </div>
@@ -174,7 +186,7 @@ export default function Home() {
                   factory={selectedFactory}
                   onBack={() => setSelectedFactory(null)}
                   onClose={() => setIsFactoryListOpen(false)}
-                  onOrder={(fac) => setOrderModalFactory(fac)}
+                  onOrder={handleOrderFactory}
                 />
               ) : (
                 <>
@@ -216,7 +228,7 @@ export default function Home() {
                           factory={factory}
                           isSelected={false}
                           onSelect={(fac) => setSelectedFactory(fac)}
-                          onOrder={(fac) => setOrderModalFactory(fac)}
+                          onOrder={handleOrderFactory}
                         />
                       ))
                     )}
@@ -254,7 +266,7 @@ export default function Home() {
                   setActiveTab("map");
                   setIsFactoryListOpen(true);
                 }}
-                onOrder={(fac) => setOrderModalFactory(fac)}
+                onOrder={handleOrderFactory}
               />
             ))}
           </div>
@@ -390,6 +402,13 @@ export default function Home() {
         isOpen={isSDGModalOpen}
         onClose={() => setIsSDGModalOpen(false)}
         additionalSavedKg={orders.reduce((sum, o) => sum + o.impactKg, 0)}
+      />
+
+      {/* Auth Protection Prompt Modal */}
+      <AuthRequiredModal
+        isOpen={isAuthModalOpen}
+        onClose={closeAuthModal}
+        actionDescription={authModalActionDescription}
       />
     </div>
   );
