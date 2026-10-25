@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthInput } from "@/components/auth/AuthInput";
-import { Mail, Lock, AlertCircle, CheckCircle2, ArrowRight } from "lucide-react";
+import { AlertCircle, CheckCircle2 } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -55,7 +55,10 @@ export default function LoginPage() {
 
       if (!response.ok) {
         setErrors({
-          general: result.message || "Email atau password yang dimasukkan tidak cocok.",
+          general:
+            result.error?.message ||
+            result.message ||
+            "Email atau password yang dimasukkan tidak cocok.",
         });
         setIsSubmitting(false);
         return;
@@ -64,6 +67,7 @@ export default function LoginPage() {
       setSuccessMessage("Berhasil masuk! Mengarahkan ke radar Sirkula...");
       setTimeout(() => {
         router.push("/");
+        router.refresh();
       }, 700);
     } catch {
       setErrors({
@@ -76,10 +80,10 @@ export default function LoginPage() {
   return (
     <AuthLayout
       mode="login"
-      heading="Welcome Back"
-      supportingText="Sign in to continue to your account."
+      heading="Holla, Welcome Back"
+      supportingText="Hey, welcome back to your special place"
       footerPrompt="Don't have an account?"
-      footerLinkText="Create an account"
+      footerLinkText="Sign Up"
       footerLinkHref="/register"
     >
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
@@ -87,20 +91,20 @@ export default function LoginPage() {
         {errors.general && (
           <div
             role="alert"
-            className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2.5 animate-in fade-in duration-200"
+            className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-[13px] flex items-start gap-2.5 animate-in fade-in duration-200"
           >
-            <AlertCircle className="w-4 h-4 text-rose-600 mt-0.5 shrink-0" />
+            <AlertCircle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
             <span className="leading-relaxed font-medium">{errors.general}</span>
           </div>
         )}
 
-        {/* Success Feedback Banner */}
+        {/* Success Feedback */}
         {successMessage && (
           <div
             role="status"
-            className="p-3.5 rounded-xl bg-[#F2F7F4] border border-[#DDE7E2] text-[#0A4D3C] text-xs flex items-center gap-2.5 animate-in fade-in duration-200"
+            className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-[13px] flex items-center gap-2.5 animate-in fade-in duration-200"
           >
-            <CheckCircle2 className="w-4 h-4 text-[#0A4D3C] shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
             <span className="leading-relaxed font-semibold">{successMessage}</span>
           </div>
         )}
@@ -111,7 +115,7 @@ export default function LoginPage() {
           name="email"
           type="email"
           label="Email Address"
-          placeholder="nama@email.com"
+          placeholder="stanley@gmail.com"
           autoComplete="email"
           value={email}
           onChange={(e) => {
@@ -119,7 +123,6 @@ export default function LoginPage() {
             if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
           }}
           error={errors.email}
-          icon={<Mail className="w-4 h-4" />}
           required
         />
 
@@ -128,7 +131,7 @@ export default function LoginPage() {
           id="login-password"
           name="password"
           label="Password"
-          placeholder="Masukkan kata sandi"
+          placeholder="••••••••••••"
           autoComplete="current-password"
           isPassword
           value={password}
@@ -137,21 +140,38 @@ export default function LoginPage() {
             if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
           }}
           error={errors.password}
-          icon={<Lock className="w-4 h-4" />}
           required
         />
 
-        {/* Remember Me & Secondary Row */}
-        <div className="flex items-center justify-between pt-1">
-          <label className="flex items-center gap-2 cursor-pointer select-none">
-            <input
-              type="checkbox"
-              id="remember-me"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-              className="w-4 h-4 rounded border-[#DDE7E2] text-[#0A4D3C] focus:ring-[#0A4D3C] focus:ring-offset-0 cursor-pointer accent-[#0A4D3C]"
-            />
-            <span className="text-xs font-medium text-[#4A6359] hover:text-[#04261C] transition-colors">
+        {/* Remember Me & Forgot Password */}
+        <div className="flex items-center justify-between pt-1 pb-1">
+          <label className="flex items-center gap-2.5 cursor-pointer select-none group">
+            <div className="relative flex items-center">
+              <input
+                type="checkbox"
+                id="remember-me"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="peer sr-only"
+              />
+              <div className="w-[18px] h-[18px] rounded-[5px] border border-[#D1D5DB] bg-white peer-checked:bg-[#0A4D3C] peer-checked:border-[#0A4D3C] transition-all peer-focus-visible:ring-2 peer-focus-visible:ring-[#0A4D3C]/30 flex items-center justify-center">
+                <svg
+                  className="w-2.5 h-2.5 text-white opacity-0 peer-checked:opacity-100 transition-opacity"
+                  viewBox="0 0 12 10"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M1.5 5L4.5 8L10.5 2"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+            </div>
+            <span className="text-[13px] text-[#6B7280] group-hover:text-[#111827] transition-colors font-normal">
               Remember me
             </span>
           </label>
@@ -161,30 +181,29 @@ export default function LoginPage() {
             onClick={() =>
               alert("Layanan reset sandi: silakan hubungi tim Sirkula di support@sirkula.id untuk verifikasi nomor registrasi Anda.")
             }
-            className="text-xs font-semibold text-[#0A4D3C] hover:text-[#063125] hover:underline transition-colors focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:outline-none rounded px-1 py-0.5"
+            className="text-[13px] font-normal text-[#6B7280] hover:text-[#0A4D3C] transition-colors focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:outline-none rounded px-1 py-0.5"
           >
-            Forgot password?
+            Forgot Password?
           </button>
         </div>
 
-        {/* Primary Submit Button */}
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full min-h-[48px] bg-[#0A4D3C] hover:bg-[#063125] text-white font-bold py-3 px-6 rounded-xl text-sm transition-all flex items-center justify-center gap-2 active:scale-[0.985] disabled:opacity-50 shadow-[0_4px_16px_rgba(10,77,60,0.25)] focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2 mt-2"
-        >
-          {isSubmitting ? (
-            <span className="flex items-center gap-2">
-              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              <span>Memverifikasi Akun...</span>
-            </span>
-          ) : (
-            <span className="flex items-center gap-2">
+        {/* Submit Button */}
+        <div className="pt-2">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full sm:w-[130px] h-[46px] bg-[#0A4D3C] hover:bg-[#07382B] text-white font-bold rounded-[10px] text-[14px] transition-all flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-60 shadow-[0_4px_14px_rgba(10,77,60,0.22)] hover:shadow-[0_6px_20px_rgba(10,77,60,0.28)]"
+          >
+            {isSubmitting ? (
+              <span className="flex items-center gap-2">
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span>Memproses...</span>
+              </span>
+            ) : (
               <span>Sign In</span>
-              <ArrowRight className="w-4 h-4" />
-            </span>
-          )}
-        </button>
+            )}
+          </button>
+        </div>
       </form>
     </AuthLayout>
   );

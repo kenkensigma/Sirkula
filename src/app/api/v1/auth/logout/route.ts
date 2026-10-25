@@ -16,11 +16,14 @@ export async function POST() {
       throw error;
     }
 
-    return NextResponse.json<ApiSuccessResponse<{ message: string }>>({
+    const response = NextResponse.json<ApiSuccessResponse<{ message: string }>>({
       data: {
         message: "Berhasil logout.",
       },
     });
+
+    response.cookies.delete("sirkula_session");
+    return response;
   } catch (err) {
     return handleApiError(err);
   }

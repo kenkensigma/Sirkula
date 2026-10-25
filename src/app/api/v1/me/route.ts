@@ -8,14 +8,24 @@ import { ApiSuccessResponse, UserProfileResponse } from "@/types/api";
 /**
  * GET /api/v1/me
  * Mengambil profil lengkap pengguna yang sedang aktif (terautentikasi).
+ * Mendukung fallback ke data profil dari cookie session untuk mode offline.
  */
 export async function GET(req: NextRequest) {
   try {
-    const { user, supabase } = await requireUser(req);
-    const profile = await ProfileService.getProfile(supabase, user.id);
+    const { user, profile, supabase } = await requireUser(req);
+
+    // Try to get full profile from Supabase; if it fails (offline mode),
+    // use the profile data already loaded by requireUser from cookie
+    let responseProfile: UserProfileResponse;
+    try {
+      responseProfile = await ProfileService.getProfile(supabase, user.id);
+    } catch {
+      // Fallback: use the profile from requireUser (cookie-based)
+      responseProfile = ProfileService.formatProfileResponse(profile);
+    }
 
     return NextResponse.json<ApiSuccessResponse<UserProfileResponse>>({
-      data: profile,
+      data: responseProfile,
     });
   } catch (err) {
     return handleApiError(err);
