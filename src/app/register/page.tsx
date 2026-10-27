@@ -4,10 +4,12 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthInput } from "@/components/auth/AuthInput";
+import { useAuth } from "@/contexts/AuthContext";
 import { User, Mail, Lock, AlertCircle, CheckCircle2, ArrowRight, Building2, Tractor } from "lucide-react";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { checkAuth } = useAuth();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -87,17 +89,33 @@ export default function RegisterPage() {
       const result = await response.json();
 
       if (!response.ok) {
+        const errorMsg =
+          result.error?.message ||
+          result.message ||
+          "Gagal membuat akun. Silakan periksa kembali data Anda.";
+
+        const fieldErrors: Record<string, string> = {};
+        if (result.error?.details && typeof result.error.details === "object") {
+          for (const [key, val] of Object.entries(result.error.details)) {
+            if (typeof val === "string") {
+              fieldErrors[key] = val;
+            }
+          }
+        }
+
         setErrors({
-          general: result.message || "Gagal membuat akun. Silakan periksa kembali data Anda.",
+          general: errorMsg,
+          ...fieldErrors,
         });
         setIsSubmitting(false);
         return;
       }
 
-      setSuccessMessage("Akun berhasil dibuat! Mengarahkan ke halaman masuk...");
+      setSuccessMessage("Akun berhasil dibuat! Mengarahkan ke radar Sirkula...");
+      await checkAuth();
       setTimeout(() => {
-        router.push("/login");
-      }, 900);
+        router.push("/");
+      }, 800);
     } catch {
       setErrors({
         general: "Terjadi gangguan jaringan saat menghubungi server pendaftaran.",

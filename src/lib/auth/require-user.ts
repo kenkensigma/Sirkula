@@ -3,6 +3,7 @@ import { createClient as createSupabaseClient, SupabaseClient, User } from "@sup
 import { Database, ProfileRow } from "@/types/database";
 import { ApiError } from "@/lib/errors/api-error";
 import { ProfileRepository } from "@/lib/repositories/profile.repository";
+import { getDemoSession } from "@/lib/auth/demo-auth";
 
 export interface AuthenticatedContext {
   user: User;
@@ -12,11 +13,40 @@ export interface AuthenticatedContext {
 
 /**
  * Mengautentikasi request saat ini dan memuat user beserta profilnya.
- * Mendukung autentikasi via Supabase session cookie (SSR) maupun Authorization Bearer token.
+ * Mendukung autentikasi via Supabase session cookie (SSR), Demo session cookie, maupun Authorization Bearer token.
  * Melempar ApiError UNAUTHENTICATED (401) jika belum login/sesi kedaluwarsa.
  * Melempar ApiError NOT_FOUND (404) jika user auth ada namun profil database belum ditemukan.
  */
 export async function requireUser(req?: Request): Promise<AuthenticatedContext> {
+  // 1. Periksa sesi demo terlebih dahulu
+  const demoSession = getDemoSession();
+  if (demoSession) {
+    const profile: ProfileRow = {
+      id: demoSession.id,
+      name: demoSession.name,
+      role: demoSession.role,
+      phone: demoSession.phone ?? null,
+      latitude: demoSession.latitude ?? null,
+      longitude: demoSession.longitude ?? null,
+      created_at: demoSession.created_at,
+      updated_at: demoSession.created_at,
+    };
+    const user = {
+      id: demoSession.id,
+      email: demoSession.email,
+      app_metadata: {},
+      user_metadata: { name: demoSession.name, role: demoSession.role },
+      aud: "authenticated",
+      created_at: demoSession.created_at,
+    } as User;
+
+    return {
+      user,
+      profile,
+      supabase: createServerClient(),
+    };
+  }
+
   const authHeader = req?.headers?.get("authorization");
   const bearerToken = authHeader?.startsWith("Bearer ")
     ? authHeader.slice(7).trim()
@@ -26,8 +56,8 @@ export async function requireUser(req?: Request): Promise<AuthenticatedContext> 
   let user: User | null = null;
 
   if (bearerToken) {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://dummy.supabase.co";
+    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "dummy-anon-key";
     supabase = createSupabaseClient<Database>(url, anonKey, {
       global: {
         headers: {

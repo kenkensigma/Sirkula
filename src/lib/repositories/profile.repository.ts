@@ -3,6 +3,7 @@ import { Database, ProfileRow, UserRole } from "@/types/database";
 import { UpdateProfileInput } from "@/lib/validation/profile.schema";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { ApiError } from "@/lib/errors/api-error";
+import { demoUsers, isSupabaseConfigured, setDemoSession } from "@/lib/auth/demo-auth";
 
 export class ProfileRepository {
   /**
@@ -12,17 +13,54 @@ export class ProfileRepository {
     client: SupabaseClient<Database>,
     userId: string
   ): Promise<ProfileRow | null> {
-    const { data, error } = await client
-      .from("profiles")
-      .select("*")
-      .eq("id", userId)
-      .maybeSingle();
-
-    if (error) {
-      throw new ApiError("INTERNAL_ERROR", `Gagal mengambil profil: ${error.message}`);
+    if (!isSupabaseConfigured()) {
+      for (const u of demoUsers.values()) {
+        if (u.id === userId) {
+          return {
+            id: u.id,
+            name: u.name,
+            role: u.role,
+            phone: u.phone ?? null,
+            latitude: u.latitude ?? null,
+            longitude: u.longitude ?? null,
+            created_at: u.created_at,
+            updated_at: u.created_at,
+          };
+        }
+      }
     }
 
-    return data;
+    try {
+      const { data, error } = await client
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .maybeSingle();
+
+      if (error) {
+        throw new ApiError("INTERNAL_ERROR", `Gagal mengambil profil: ${error.message}`);
+      }
+
+      return data;
+    } catch (err) {
+      if (!isSupabaseConfigured()) {
+        for (const u of demoUsers.values()) {
+          if (u.id === userId) {
+            return {
+              id: u.id,
+              name: u.name,
+              role: u.role,
+              phone: u.phone ?? null,
+              latitude: u.latitude ?? null,
+              longitude: u.longitude ?? null,
+              created_at: u.created_at,
+              updated_at: u.created_at,
+            };
+          }
+        }
+      }
+      throw err;
+    }
   }
 
   /**
@@ -34,6 +72,30 @@ export class ProfileRepository {
     userId: string,
     input: UpdateProfileInput
   ): Promise<ProfileRow> {
+    if (!isSupabaseConfigured()) {
+      for (const [email, u] of demoUsers.entries()) {
+        if (u.id === userId) {
+          if (input.name !== undefined) u.name = input.name;
+          if (input.phone !== undefined) u.phone = input.phone;
+          if (input.latitude !== undefined) u.latitude = input.latitude;
+          if (input.longitude !== undefined) u.longitude = input.longitude;
+
+          const updated: ProfileRow = {
+            id: u.id,
+            name: u.name,
+            role: u.role,
+            phone: u.phone ?? null,
+            latitude: u.latitude ?? null,
+            longitude: u.longitude ?? null,
+            created_at: u.created_at,
+            updated_at: new Date().toISOString(),
+          };
+          setDemoSession(updated);
+          return updated;
+        }
+      }
+    }
+
     const updatePayload: Partial<Database["public"]["Tables"]["profiles"]["Update"]> = {
       updated_at: new Date().toISOString(),
     };
@@ -73,7 +135,7 @@ export class ProfileRepository {
 
     const { data, error } = await adminClient
       .from("profiles")
-      .insert({
+      .upsert({
         id: profileData.id,
         name: profileData.name,
         role: profileData.role,

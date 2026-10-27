@@ -5,6 +5,7 @@ import { ProfileRepository } from "@/lib/repositories/profile.repository";
 import { ProfileService } from "@/lib/services/profile.service";
 import { createErrorResponse, handleApiError } from "@/lib/errors/api-error";
 import { ApiSuccessResponse, UserProfileResponse } from "@/types/api";
+import { isSupabaseConfigured, verifyDemoLogin, setDemoSession } from "@/lib/auth/demo-auth";
 
 interface LoginResponseData {
   user: {
@@ -40,6 +41,36 @@ export async function POST(req: NextRequest) {
     }
 
     const { email, password } = parseResult.data;
+
+    // 1. Dukungan Demo Mode jika Supabase belum dikonfigurasi
+    if (!isSupabaseConfigured()) {
+      const { user, profile, error } = verifyDemoLogin(email, password);
+
+      if (error || !user || !profile) {
+        return createErrorResponse(
+          "UNAUTHENTICATED",
+          error || "Email atau password yang dimasukkan salah."
+        );
+      }
+
+      setDemoSession(profile);
+
+      return NextResponse.json<ApiSuccessResponse<LoginResponseData>>({
+        data: {
+          user: {
+            id: user.id,
+            email: user.email,
+          },
+          profile: ProfileService.formatProfileResponse(profile),
+          session: {
+            access_token: "demo-access-token",
+            token_type: "bearer",
+          },
+        },
+      });
+    }
+
+    // 2. Real Supabase Auth
     const supabase = createClient();
 
     const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
@@ -50,7 +81,7 @@ export async function POST(req: NextRequest) {
     if (authError || !authData.user) {
       return createErrorResponse(
         "UNAUTHENTICATED",
-        "Email atau password yang dimasukkan salah."
+        authError?.message || "Email atau password yang dimasukkan salah."
       );
     }
 

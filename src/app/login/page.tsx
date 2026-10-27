@@ -4,10 +4,12 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthInput } from "@/components/auth/AuthInput";
+import { useAuth } from "@/contexts/AuthContext";
 import { Mail, Lock, AlertCircle, CheckCircle2, ArrowRight } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { checkAuth } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -48,20 +50,36 @@ export default function LoginPage() {
       const response = await fetch("/api/v1/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: email.trim(), password }),
       });
 
       const result = await response.json();
 
       if (!response.ok) {
+        const errorMsg =
+          result.error?.message ||
+          result.message ||
+          "Email atau password yang dimasukkan tidak cocok.";
+
+        const fieldErrors: Record<string, string> = {};
+        if (result.error?.details && typeof result.error.details === "object") {
+          for (const [key, val] of Object.entries(result.error.details)) {
+            if (typeof val === "string") {
+              fieldErrors[key] = val;
+            }
+          }
+        }
+
         setErrors({
-          general: result.message || "Email atau password yang dimasukkan tidak cocok.",
+          general: errorMsg,
+          ...fieldErrors,
         });
         setIsSubmitting(false);
         return;
       }
 
       setSuccessMessage("Berhasil masuk! Mengarahkan ke radar Sirkula...");
+      await checkAuth();
       setTimeout(() => {
         router.push("/");
       }, 700);
