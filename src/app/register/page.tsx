@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthInput } from "@/components/auth/AuthInput";
 import { useAuth } from "@/contexts/AuthContext";
-import { User, Mail, Lock, AlertCircle, CheckCircle2, ArrowRight, Building2, Tractor } from "lucide-react";
+import { AlertCircle, CheckCircle2, Building2, Tractor } from "lucide-react";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -128,77 +128,93 @@ export default function RegisterPage() {
     <AuthLayout
       mode="register"
       heading="Create Your Account"
-      supportingText="Get started by creating your account."
+      supportingText="Get started by creating your Sirkula account"
       footerPrompt="Already have an account?"
       footerLinkText="Sign In"
       footerLinkHref="/login"
     >
-      <form onSubmit={handleSubmit} noValidate className="space-y-3.5">
+      <form onSubmit={handleSubmit} noValidate className="space-y-4">
         {/* General Error Banner */}
         {errors.general && (
           <div
             role="alert"
-            className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2.5 animate-in fade-in duration-200"
+            className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-[13px] flex items-start gap-2.5 animate-in fade-in duration-200"
           >
-            <AlertCircle className="w-4 h-4 text-rose-600 mt-0.5 shrink-0" />
+            <AlertCircle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
             <span className="leading-relaxed font-medium">{errors.general}</span>
           </div>
         )}
 
-        {/* Success Feedback Banner */}
+        {/* Success Feedback */}
         {successMessage && (
           <div
             role="status"
-            className="p-3.5 rounded-xl bg-[#F2F7F4] border border-[#DDE7E2] text-[#0A4D3C] text-xs flex items-center gap-2.5 animate-in fade-in duration-200"
+            className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-[13px] flex items-center gap-2.5 animate-in fade-in duration-200"
           >
-            <CheckCircle2 className="w-4 h-4 text-[#0A4D3C] shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
             <span className="leading-relaxed font-semibold">{successMessage}</span>
           </div>
         )}
 
-        {/* Role Selector Segmented Controls */}
-        <div className="space-y-1.5">
-          <label className="block text-xs font-bold text-[#04261C] tracking-tight">
+        {/* Role Selector */}
+        <div>
+          <label className="block text-[13px] font-semibold text-[#111827] mb-2 tracking-[-0.01em]">
             Peran Pengguna
           </label>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2.5">
             <button
               type="button"
               onClick={() => setRole("farmer")}
-              className={`p-2.5 rounded-xl border text-left flex items-center gap-2 transition-all min-h-[44px] ${
+              className={`p-3 rounded-[12px] border text-left flex items-center gap-2.5 transition-all h-[52px] ${
                 role === "farmer"
-                  ? "bg-[#F2F7F4] border-2 border-[#0A4D3C] text-[#04261C] shadow-2xs"
-                  : "bg-white border-[#DDE7E2] text-[#4A6359] hover:border-[#CBDCD2]"
+                  ? "bg-[#F0FDF4] border-[#0A4D3C] ring-1 ring-[#0A4D3C]"
+                  : "bg-white border-[#E5E7EB] hover:border-[#D1D5DB]"
               }`}
             >
-              <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
-                role === "farmer" ? "bg-[#0A4D3C] text-white" : "bg-[#F4F8F5] text-[#4A6359]"
-              }`}>
-                <Tractor className="w-3.5 h-3.5" />
+              <div
+                className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+                  role === "farmer"
+                    ? "bg-[#0A4D3C] text-white"
+                    : "bg-[#F3F4F6] text-[#737373]"
+                }`}
+              >
+                <Tractor className="w-4 h-4" />
               </div>
               <div className="min-w-0">
-                <span className="text-xs font-bold block truncate leading-tight">Peternak</span>
-                <span className="text-[10px] text-[#4A6359] block truncate">Pembeli Pakan</span>
+                <span className="text-[13px] font-bold text-[#111827] block truncate leading-tight">
+                  Peternak
+                </span>
+                <span className="text-[11px] text-[#6B7280] block truncate">
+                  Pembeli Pakan
+                </span>
               </div>
             </button>
 
             <button
               type="button"
               onClick={() => setRole("factory")}
-              className={`p-2.5 rounded-xl border text-left flex items-center gap-2 transition-all min-h-[44px] ${
+              className={`p-3 rounded-[12px] border text-left flex items-center gap-2.5 transition-all h-[52px] ${
                 role === "factory"
-                  ? "bg-[#F2F7F4] border-2 border-[#0A4D3C] text-[#04261C] shadow-2xs"
-                  : "bg-white border-[#DDE7E2] text-[#4A6359] hover:border-[#CBDCD2]"
+                  ? "bg-[#F0FDF4] border-[#0A4D3C] ring-1 ring-[#0A4D3C]"
+                  : "bg-white border-[#E5E7EB] hover:border-[#D1D5DB]"
               }`}
             >
-              <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
-                role === "factory" ? "bg-[#0A4D3C] text-white" : "bg-[#F4F8F5] text-[#4A6359]"
-              }`}>
-                <Building2 className="w-3.5 h-3.5" />
+              <div
+                className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+                  role === "factory"
+                    ? "bg-[#0A4D3C] text-white"
+                    : "bg-[#F3F4F6] text-[#737373]"
+                }`}
+              >
+                <Building2 className="w-4 h-4" />
               </div>
               <div className="min-w-0">
-                <span className="text-xs font-bold block truncate leading-tight">Pabrik Tahu</span>
-                <span className="text-[10px] text-[#4A6359] block truncate">Penyedia Ampas</span>
+                <span className="text-[13px] font-bold text-[#111827] block truncate leading-tight">
+                  Pabrik Tahu
+                </span>
+                <span className="text-[11px] text-[#6B7280] block truncate">
+                  Penyedia Ampas
+                </span>
               </div>
             </button>
           </div>
@@ -218,7 +234,6 @@ export default function RegisterPage() {
             if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
           }}
           error={errors.name}
-          icon={<User className="w-4 h-4" />}
           required
         />
 
@@ -236,7 +251,6 @@ export default function RegisterPage() {
             if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
           }}
           error={errors.email}
-          icon={<Mail className="w-4 h-4" />}
           required
         />
 
@@ -254,7 +268,6 @@ export default function RegisterPage() {
             if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
           }}
           error={errors.password}
-          icon={<Lock className="w-4 h-4" />}
           required
         />
 
@@ -272,28 +285,26 @@ export default function RegisterPage() {
             if (errors.confirmPassword) setErrors((prev) => ({ ...prev, confirmPassword: undefined }));
           }}
           error={errors.confirmPassword}
-          icon={<Lock className="w-4 h-4" />}
           required
         />
 
-        {/* Primary Submit Button */}
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full min-h-[48px] bg-[#0A4D3C] hover:bg-[#063125] text-white font-bold py-3 px-6 rounded-xl text-sm transition-all flex items-center justify-center gap-2 active:scale-[0.985] disabled:opacity-50 shadow-[0_4px_16px_rgba(10,77,60,0.25)] focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2 mt-3"
-        >
-          {isSubmitting ? (
-            <span className="flex items-center gap-2">
-              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              <span>Memproses Registrasi...</span>
-            </span>
-          ) : (
-            <span className="flex items-center gap-2">
+        {/* Submit Button */}
+        <div className="pt-2">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full sm:w-[160px] h-[46px] bg-[#0A4D3C] hover:bg-[#07382B] text-white font-bold rounded-[10px] text-[14px] transition-all flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-60 shadow-[0_4px_14px_rgba(10,77,60,0.22)] hover:shadow-[0_6px_20px_rgba(10,77,60,0.28)]"
+          >
+            {isSubmitting ? (
+              <span className="flex items-center gap-2">
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span>Memproses...</span>
+              </span>
+            ) : (
               <span>Create Account</span>
-              <ArrowRight className="w-4 h-4" />
-            </span>
-          )}
-        </button>
+            )}
+          </button>
+        </div>
       </form>
     </AuthLayout>
   );

@@ -27,22 +27,21 @@ export const AuthInput: React.FC<AuthInputProps> = ({
   const effectiveType = isPassword ? (showPassword ? "text" : "password") : type;
 
   return (
-    <div className="space-y-1.5 w-full text-left">
-      <div className="flex items-center justify-between">
-        <label
-          htmlFor={id}
-          className="block text-xs font-bold text-[#04261C] tracking-tight"
-        >
-          {label}
-        </label>
-        {supportingText && (
-          <span className="text-xs text-[#4A6359]">{supportingText}</span>
-        )}
-      </div>
+    <div className="w-full text-left">
+      <label
+        htmlFor={id}
+        className="block text-[13px] font-semibold text-[#171717] mb-1.5 tracking-[-0.01em]"
+      >
+        {label}
+      </label>
 
-      <div className="relative flex items-center">
+      {supportingText && (
+        <span className="block text-xs text-[#737373] mb-1.5">{supportingText}</span>
+      )}
+
+      <div className="relative flex items-center group">
         {icon && (
-          <div className="absolute left-3.5 flex items-center pointer-events-none text-[#4A6359] z-10">
+          <div className="absolute left-3.5 flex items-center pointer-events-none text-[#A3A3A3] group-focus-within:text-[#0A4D3C] transition-colors z-10">
             {icon}
           </div>
         )}
@@ -52,14 +51,14 @@ export const AuthInput: React.FC<AuthInputProps> = ({
           type={effectiveType}
           aria-invalid={Boolean(error)}
           aria-describedby={error ? `${id}-error` : undefined}
-          className={`w-full min-h-[48px] px-3.5 py-2.5 ${
-            icon ? "pl-10" : ""
+          className={`w-full h-[50px] px-4 ${
+            icon ? "pl-11" : ""
           } ${
-            isPassword ? "pr-11" : ""
-          } text-sm font-medium text-[#04261C] bg-[#F8FAF9] hover:bg-[#F2F7F4] focus:bg-white border rounded-xl transition-all duration-150 outline-none placeholder:text-[#4A6359]/60 ${
+            isPassword ? "pr-12" : ""
+          } text-[14px] font-normal text-[#111827] bg-white border rounded-[12px] transition-all duration-150 outline-none placeholder:text-[#9CA3AF] ${
             error
-              ? "border-[#DC2626] focus:border-[#DC2626] focus:ring-2 focus:ring-[#DC2626]/15"
-              : "border-[#DDE7E2] focus:border-[#0A4D3C] focus:ring-2 focus:ring-[#0A4D3C]/15"
+              ? "border-[#DC2626] focus:border-[#DC2626] focus:ring-4 focus:ring-[#DC2626]/10"
+              : "border-[#E5E7EB] hover:border-[#CBD5E1] focus:border-[#0A4D3C] focus:ring-4 focus:ring-[#0A4D3C]/10"
           } ${className}`}
           {...props}
         />
@@ -68,14 +67,14 @@ export const AuthInput: React.FC<AuthInputProps> = ({
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-2.5 p-2 rounded-lg text-[#4A6359] hover:text-[#04261C] hover:bg-black/[0.04] transition-colors focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:outline-none min-h-[40px] min-w-[40px] flex items-center justify-center"
+            className="absolute right-1.5 p-2.5 rounded-md text-[#A3A3A3] hover:text-[#171717] transition-colors focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:outline-none min-h-[40px] min-w-[40px] flex items-center justify-center"
             aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
             tabIndex={0}
           >
             {showPassword ? (
-              <EyeOff className="w-4 h-4" />
+              <EyeOff className="w-[18px] h-[18px]" />
             ) : (
-              <Eye className="w-4 h-4" />
+              <Eye className="w-[18px] h-[18px]" />
             )}
           </button>
         )}
@@ -85,7 +84,7 @@ export const AuthInput: React.FC<AuthInputProps> = ({
         <p
           id={`${id}-error`}
           role="alert"
-          className="text-xs text-[#DC2626] font-medium pt-0.5 animate-in fade-in duration-150"
+          className="text-[12px] text-[#DC2626] font-medium mt-1.5 animate-in fade-in duration-150"
         >
           {error}
         </p>

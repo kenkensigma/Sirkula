@@ -334,7 +334,7 @@ After implementation:
 6. Check responsive layouts at desktop and mobile widths.
 7. Fix any implementation issues discovered during verification.
 
-Do not stop after creating static markup or a design preview.
+Do not stop after creating static markup or a design preview.https://127.0.0.1:64825/static/artifacts/52266201-b316-454a-b346-7ad0d13988af/.user_uploaded/media_1792818445924.png?csrf=fc205060-e711-43e6-8285-1d6cfdf549cb
 
 ## Final Deliverable
 
