@@ -1025,7 +1025,7 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
 
             {/* Right Column: Order Summary Card matching photo */}
             <div className="lg:col-span-5">
-              <div className="bg-white rounded-3xl border border-[#DDE7E2] p-5 sm:p-6 shadow-[0_4px_20px_rgba(4,38,28,0.06)] sticky top-4 space-y-5">
+              <div className="bg-[#F2F7F4] rounded-3xl border border-[#DDE7E2] p-5 sm:p-6 shadow-[0_4px_20px_rgba(4,38,28,0.06)] sticky top-4 space-y-5">
                 
                 {/* Header */}
                 <h3 className="font-extrabold text-[#04261C] text-lg tracking-tight">

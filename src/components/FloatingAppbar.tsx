@@ -19,6 +19,8 @@ interface FloatingAppbarProps {
   activeTab: NavTab;
   onTabChange: (tab: NavTab) => void;
   ordersCount: number;
+  isLocationGranted: boolean;
+  onRequestLocation: () => void;
 }
 
 export const FloatingAppbar: React.FC<FloatingAppbarProps> = ({
@@ -27,6 +29,8 @@ export const FloatingAppbar: React.FC<FloatingAppbarProps> = ({
   factoriesCount,
   activeFilter,
   onFilterChange,
+  isLocationGranted,
+  onRequestLocation,
 }) => {
   const { user, isAuthenticated, logout } = useAuth();
   const [showFilters, setShowFilters] = useState(false);
@@ -37,6 +41,14 @@ export const FloatingAppbar: React.FC<FloatingAppbarProps> = ({
     { key: "yellow", label: "Diskon 15%", dot: "#ff9f0a" },
     { key: "near", label: "< 5 km" },
   ];
+
+  const handleFilterClick = (key: "all" | "near" | "green" | "yellow") => {
+    if (key === "near" && !isLocationGranted) {
+      onRequestLocation();
+      return;
+    }
+    onFilterChange(key);
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 pointer-events-none">
@@ -133,13 +145,17 @@ export const FloatingAppbar: React.FC<FloatingAppbarProps> = ({
               <div className="inline-flex p-0.5 bg-[#F2F7F4] rounded-xl w-full sm:w-auto border border-[#DDE7E2]">
                 {filters.map((f) => {
                   const isActive = activeFilter === f.key;
+                  const isNearLocked = f.key === "near" && !isLocationGranted;
                   return (
                     <button
                       key={f.key}
-                      onClick={() => onFilterChange(f.key)}
+                      onClick={() => handleFilterClick(f.key)}
+                      disabled={isNearLocked}
                       className={`apple-press-sm flex-1 sm:flex-initial px-3 py-1.5 rounded-[10px] text-xs font-semibold transition-all flex items-center justify-center gap-1.5 whitespace-nowrap min-h-[32px] ${
                         isActive
                           ? "bg-[#0A4D3C] text-white shadow-xs"
+                          : isNearLocked
+                          ? "text-[#9FB1A9] cursor-not-allowed"
                           : "text-[#4A6359] hover:text-[#04261C]"
                       }`}
                     >
@@ -150,6 +166,7 @@ export const FloatingAppbar: React.FC<FloatingAppbarProps> = ({
                         />
                       )}
                       <span>{f.label}</span>
+                      {isNearLocked && <span className="text-[10px]">🔒</span>}
                     </button>
                   );
                 })}

@@ -35,6 +35,9 @@ export default function Home() {
   // State for the DOM panel, toggled from the Floating Appbar
   const [isFactoryListOpen, setIsFactoryListOpen] = useState<boolean>(false);
 
+  // Location permission state
+  const [isLocationGranted, setIsLocationGranted] = useState<boolean>(false);
+
   // Order & Escrow state
   const [orderModalFactory, setOrderModalFactory] = useState<FactoryLocation | null>(null);
   const [orders, setOrders] = useState<ActiveOrder[]>([]);
@@ -43,6 +46,25 @@ export default function Home() {
 
   // Authentication gate for transactions & sensitive actions
   const { requireAuth, isAuthModalOpen, closeAuthModal, authModalActionDescription } = useAuth();
+
+  const handleRequestLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Browser Anda tidak mendukung lokasi.");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      () => setIsLocationGranted(true),
+      () => setIsLocationGranted(false)
+    );
+  };
+
+  const handleFilterChange = (filter: "all" | "near" | "green" | "yellow") => {
+    if (filter === "near" && !isLocationGranted) {
+      handleRequestLocation();
+      return;
+    }
+    setActiveFilter(filter);
+  };
 
   const handleOrderFactory = (fac: FactoryLocation) => {
     if (!requireAuth("memesan ampas tahu dan mengunci dana di Rekening Bersama Escrow")) {
@@ -126,7 +148,7 @@ export default function Home() {
         onToggleFactoryList={() => setIsFactoryListOpen((prev) => !prev)}
         factoriesCount={filteredFactories.length}
         activeFilter={activeFilter}
-        onFilterChange={setActiveFilter}
+        onFilterChange={handleFilterChange}
         onOpenSDGModal={() => setIsSDGModalOpen(true)}
         isRadiusCircleVisible={isRadiusCircleVisible}
         onToggleRadiusCircle={() => setIsRadiusCircleVisible((prev) => !prev)}
@@ -134,6 +156,8 @@ export default function Home() {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         ordersCount={orders.filter((o) => o.status !== "DELIVERED_SETTLED").length}
+        isLocationGranted={isLocationGranted}
+        onRequestLocation={handleRequestLocation}
       />
 
       {/* Tab: Radar Peta */}
