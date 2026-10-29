@@ -37,6 +37,7 @@ export default function Home() {
 
   // Location permission state
   const [isLocationGranted, setIsLocationGranted] = useState<boolean>(false);
+  const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
 
   // Order & Escrow state
   const [orderModalFactory, setOrderModalFactory] = useState<FactoryLocation | null>(null);
@@ -47,14 +48,24 @@ export default function Home() {
   // Authentication gate for transactions & sensitive actions
   const { requireAuth, isAuthModalOpen, closeAuthModal, authModalActionDescription } = useAuth();
 
+  const effectiveUserLocation = isLocationGranted && userLocation
+    ? userLocation
+    : USER_FARMER_LOCATION;
+
   const handleRequestLocation = () => {
     if (!navigator.geolocation) {
       alert("Browser Anda tidak mendukung lokasi.");
       return;
     }
     navigator.geolocation.getCurrentPosition(
-      () => setIsLocationGranted(true),
-      () => setIsLocationGranted(false)
+      (pos) => {
+        setUserLocation({ latitude: pos.coords.latitude, longitude: pos.coords.longitude });
+        setIsLocationGranted(true);
+      },
+      () => {
+        setUserLocation(null);
+        setIsLocationGranted(false);
+      }
     );
   };
 
@@ -77,7 +88,7 @@ export default function Home() {
   const filteredFactories = useMemo(() => {
     return factories.filter((factory) => {
       const distance = calculateHaversineDistance(
-        { latitude: USER_FARMER_LOCATION.latitude, longitude: USER_FARMER_LOCATION.longitude },
+        { latitude: effectiveUserLocation.latitude, longitude: effectiveUserLocation.longitude },
         { latitude: factory.latitude, longitude: factory.longitude }
       );
 
@@ -95,7 +106,7 @@ export default function Home() {
       }
       return true;
     });
-  }, [factories, activeFilter]);
+  }, [factories, activeFilter, effectiveUserLocation]);
 
   // Aggregate statistics
   const totalKgAvailable = useMemo(() => {
@@ -174,6 +185,8 @@ export default function Home() {
                 }}
                 onOrderFactory={handleOrderFactory}
                 isRadiusCircleVisible={isRadiusCircleVisible}
+                isLocationGranted={isLocationGranted}
+                userLocation={effectiveUserLocation}
               />
             </div>
 

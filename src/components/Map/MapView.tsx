@@ -13,6 +13,8 @@ interface MapViewProps {
   onSelectFactory: (factory: FactoryLocation) => void;
   onOrderFactory: (factory: FactoryLocation) => void;
   isRadiusCircleVisible: boolean;
+  isLocationGranted: boolean;
+  userLocation: { latitude: number; longitude: number };
 }
 
 // Controller component to programmatically fly map with optical centering and close zoom
@@ -77,6 +79,8 @@ export const MapView: React.FC<MapViewProps> = ({
   onSelectFactory,
   onOrderFactory,
   isRadiusCircleVisible,
+  isLocationGranted,
+  userLocation,
 }) => {
   const [isClient, setIsClient] = useState(false);
 
@@ -170,7 +174,7 @@ export const MapView: React.FC<MapViewProps> = ({
       >
         <MapController
           selectedFactory={selectedFactory}
-          userLocation={USER_FARMER_LOCATION}
+          userLocation={userLocation}
         />
 
         {/* Standard OSM tile layer */}
@@ -181,9 +185,9 @@ export const MapView: React.FC<MapViewProps> = ({
         />
 
         {/* 15 KM Radar Circle */}
-        {isRadiusCircleVisible && (
+        {isLocationGranted && isRadiusCircleVisible && (
           <Circle
-            center={[USER_FARMER_LOCATION.latitude, USER_FARMER_LOCATION.longitude]}
+            center={[userLocation.latitude, userLocation.longitude]}
             radius={15000}
             pathOptions={{
               color: "#0A4D3C",
@@ -196,30 +200,32 @@ export const MapView: React.FC<MapViewProps> = ({
         )}
 
         {/* GPS Location Pin */}
-        <Marker
-          position={[USER_FARMER_LOCATION.latitude, USER_FARMER_LOCATION.longitude]}
-          icon={gpsIcon}
-        >
-          <Popup className="custom-popup" autoPan={false}>
-            <div className="p-3 text-slate-800">
-              <span className="text-[10px] font-semibold text-emerald-800 uppercase tracking-wider block">
-                Titik GPS Peternak
-              </span>
-              <h4 className="font-bold text-sm text-slate-900 mt-0.5">{USER_FARMER_LOCATION.name}</h4>
-              <p className="text-[11px] text-slate-600 mt-1">
-                {USER_FARMER_LOCATION.address}
-              </p>
-              <p className="text-[10px] text-slate-600 font-mono mt-1">
-                Radius Radar: {USER_FARMER_LOCATION.maxRadiusKm} KM
-              </p>
-            </div>
-          </Popup>
-        </Marker>
+        {isLocationGranted && (
+          <Marker
+            position={[userLocation.latitude, userLocation.longitude]}
+            icon={gpsIcon}
+          >
+            <Popup className="custom-popup" autoPan={false}>
+              <div className="p-3 text-slate-800">
+                <span className="text-[10px] font-semibold text-emerald-800 uppercase tracking-wider block">
+                  Titik GPS Peternak
+                </span>
+                <h4 className="font-bold text-sm text-slate-900 mt-0.5">Lokasi Anda</h4>
+                <p className="text-[11px] text-slate-600 mt-1">
+                  {userLocation.latitude.toFixed(5)}, {userLocation.longitude.toFixed(5)}
+                </p>
+                <p className="text-[10px] text-slate-600 font-mono mt-1">
+                  Radius Radar: 15 KM
+                </p>
+              </div>
+            </Popup>
+          </Marker>
+        )}
 
         {/* Factory Markers */}
         {factories.map((factory) => {
           const distance = calculateHaversineDistance(
-            { latitude: USER_FARMER_LOCATION.latitude, longitude: USER_FARMER_LOCATION.longitude },
+            { latitude: userLocation.latitude, longitude: userLocation.longitude },
             { latitude: factory.latitude, longitude: factory.longitude }
           );
           const formattedDistance = formatDistanceDisplay(distance);

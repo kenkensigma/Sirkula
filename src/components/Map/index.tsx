@@ -10,6 +10,8 @@ interface MapProps {
   onSelectFactory: (factory: FactoryLocation) => void;
   onOrderFactory: (factory: FactoryLocation) => void;
   isRadiusCircleVisible: boolean;
+  isLocationGranted: boolean;
+  userLocation: { latitude: number; longitude: number };
 }
 
 const DynamicMapView = dynamic(
