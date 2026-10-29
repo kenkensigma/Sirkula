@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { FactoryLocation, USER_FARMER_LOCATION } from "@/data/mockFactories";
+import { FactoryLocation } from "@/data/mockFactories";
 import { calculateHaversineDistance, formatDistanceDisplay } from "@/lib/geo/haversine";
 
 interface FactoryCardProps {
@@ -9,6 +9,7 @@ interface FactoryCardProps {
   isSelected: boolean;
   onSelect: (factory: FactoryLocation) => void;
   onOrder: (factory: FactoryLocation) => void;
+  userLocation: { latitude: number; longitude: number };
 }
 
 const FRESHNESS_WINDOW_HOURS = 12;
@@ -19,9 +20,10 @@ export const FactoryCard: React.FC<FactoryCardProps> = ({
   isSelected,
   onSelect,
   onOrder,
+  userLocation,
 }) => {
   const distance = calculateHaversineDistance(
-    { latitude: USER_FARMER_LOCATION.latitude, longitude: USER_FARMER_LOCATION.longitude },
+    { latitude: userLocation.latitude, longitude: userLocation.longitude },
     { latitude: factory.latitude, longitude: factory.longitude }
   );
   const formattedDistance = formatDistanceDisplay(distance);

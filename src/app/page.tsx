@@ -224,6 +224,7 @@ export default function Home() {
                   onBack={() => setSelectedFactory(null)}
                   onClose={() => setIsFactoryListOpen(false)}
                   onOrder={handleOrderFactory}
+                  userLocation={effectiveUserLocation}
                 />
               ) : (
                 <>
@@ -266,6 +267,7 @@ export default function Home() {
                           isSelected={false}
                           onSelect={(fac) => setSelectedFactory(fac)}
                           onOrder={handleOrderFactory}
+                          userLocation={effectiveUserLocation}
                         />
                       ))
                     )}
@@ -304,6 +306,7 @@ export default function Home() {
                   setIsFactoryListOpen(true);
                 }}
                 onOrder={handleOrderFactory}
+                userLocation={effectiveUserLocation}
               />
             ))}
           </div>
@@ -426,6 +429,7 @@ export default function Home() {
         isOpen={!!orderModalFactory}
         onClose={() => setOrderModalFactory(null)}
         onOrderSuccess={handleOrderSuccess}
+        userLocation={effectiveUserLocation}
       />
 
       <EscrowVerificationModal

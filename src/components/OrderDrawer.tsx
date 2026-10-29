@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { FactoryLocation, USER_FARMER_LOCATION } from "@/data/mockFactories";
+import { FactoryLocation } from "@/data/mockFactories";
 import { calculateHaversineDistance, formatDistanceDisplay } from "@/lib/geo/haversine";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -51,6 +51,7 @@ interface OrderDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   onOrderSuccess: (order: ActiveOrder) => void;
+  userLocation: { latitude: number; longitude: number };
 }
 
 type CheckoutStep = 1 | 2 | 3;
@@ -74,6 +75,7 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
   isOpen,
   onClose,
   onOrderSuccess,
+  userLocation,
 }) => {
   const { user } = useAuth();
 
@@ -132,7 +134,7 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
         setFullName(user?.name || "Pak Wayan Gunawan");
         setEmail(user?.email || "wayan.ternak@gmail.com");
         setPhone(user?.phone || "0812-3456-7890");
-        setAddressLine1(USER_FARMER_LOCATION.address);
+        setAddressLine1("Lokasi GPS terdeteksi");
         setAddressLine2("Kandang Sapi Mandiri Banjar");
       }
     } catch {
@@ -158,10 +160,10 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
   const distance = useMemo(() => {
     if (!factory) return 2.4;
     return calculateHaversineDistance(
-      { latitude: USER_FARMER_LOCATION.latitude, longitude: USER_FARMER_LOCATION.longitude },
+      { latitude: userLocation.latitude, longitude: userLocation.longitude },
       { latitude: factory.latitude, longitude: factory.longitude }
     );
-  }, [factory]);
+  }, [factory, userLocation]);
 
   const formattedDistance = formatDistanceDisplay(distance);
   const pricePerSack = factory?.activeBatch.pricePerSackIdr || 25000;

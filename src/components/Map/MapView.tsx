@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from "react-leaflet";
 import L from "leaflet";
-import { FactoryLocation, USER_FARMER_LOCATION } from "@/data/mockFactories";
+import { FactoryLocation } from "@/data/mockFactories";
 import { calculateHaversineDistance, formatDistanceDisplay } from "@/lib/geo/haversine";
 import { ShieldCheck } from "lucide-react";
 
@@ -165,7 +165,7 @@ export const MapView: React.FC<MapViewProps> = ({
   return (
     <div className="relative w-full h-full min-h-[450px] bg-slate-100">
       <MapContainer
-        center={[USER_FARMER_LOCATION.latitude, USER_FARMER_LOCATION.longitude]}
+        center={[userLocation.latitude, userLocation.longitude]}
         zoom={12.5}
         zoomSnap={0.5}
         zoomDelta={0.5}
