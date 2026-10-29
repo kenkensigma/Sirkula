@@ -52,6 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             role: json.data.role,
             phone: json.data.phone,
           });
+          setIsAuthModalOpen(false);
           return;
         }
       }
