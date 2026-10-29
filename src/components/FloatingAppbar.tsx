@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Compass, Layers, SlidersHorizontal, LogIn, LogOut } from "lucide-react";
+import { Compass, Layers, SlidersHorizontal, LogIn, LogOut, Navigation2 } from "lucide-react";
 import { NavTab } from "./BottomAppbar";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -138,6 +138,24 @@ export const FloatingAppbar: React.FC<FloatingAppbarProps> = ({
               )}
             </div>
           </div>
+
+          {/* Location Permission Notification */}
+          {!isLocationGranted && (
+            <div className="mt-2 pt-2 border-t border-[#DDE7E2] flex items-center justify-between gap-2 bg-[#F2F7F4] rounded-xl px-3 py-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <Navigation2 className="w-4 h-4 text-[#0A4D3C] shrink-0" />
+                <p className="text-xs font-semibold text-[#04261C] truncate">
+                  Aktifkan lokasi untuk melihat pabrik terdekat
+                </p>
+              </div>
+              <button
+                onClick={onRequestLocation}
+                className="apple-press shrink-0 min-h-[32px] px-3 rounded-lg bg-[#0A4D3C] text-white text-xs font-bold hover:bg-[#063125] transition-colors focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
+              >
+                Izinkan
+              </button>
+            </div>
+          )}
 
           {/* Segmented Control Filter Bar */}
           {showFilters && (

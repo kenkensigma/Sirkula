@@ -200,6 +200,29 @@ export default function Home() {
               <Navigation className="w-5 h-5 text-[#0A4D3C]" />
             </button>
 
+            {/* Location Permission Notification on Map */}
+            {!isLocationGranted && (
+              <div className="absolute top-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-20 bg-white/95 backdrop-blur-md border border-[#DDE7E2] rounded-2xl p-4 shadow-[0_8px_30px_rgba(4,38,28,0.12)] animate-in fade-in slide-in-from-top-2 duration-300">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-[#F2F7F4] border border-[#DDE7E2] flex items-center justify-center shrink-0">
+                    <Navigation className="w-5 h-5 text-[#0A4D3C]" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-sm font-bold text-[#04261C]">Izinkan Akses Lokasi</h4>
+                    <p className="text-xs text-[#4A6359] mt-0.5 leading-relaxed">
+                      Aktifkan lokasi perangkat untuk melihat pabrik terdekat dan menghitung jarak akurat.
+                    </p>
+                    <button
+                      onClick={handleRequestLocation}
+                      className="apple-press mt-2.5 min-h-[36px] px-4 rounded-xl bg-[#0A4D3C] text-white text-xs font-bold hover:bg-[#063125] transition-colors focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
+                    >
+                      Izinkan Lokasi
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Reopen Sheet Capsule Button */}
             {!isFactoryListOpen && (
               <button
