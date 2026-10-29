@@ -33,7 +33,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<NavTab>("map");
   
   // State for the DOM panel, toggled from the Floating Appbar
-  const [isFactoryListOpen, setIsFactoryListOpen] = useState<boolean>(true);
+  const [isFactoryListOpen, setIsFactoryListOpen] = useState<boolean>(false);
 
   // Order & Escrow state
   const [orderModalFactory, setOrderModalFactory] = useState<FactoryLocation | null>(null);
@@ -179,7 +179,7 @@ export default function Home() {
           {isFactoryListOpen && (
             <aside
               aria-label="Panel Pabrik"
-              className="fixed inset-x-0 bottom-14 max-h-[72vh] rounded-t-[32px] md:top-20 md:left-6 md:right-auto md:bottom-20 md:w-[420px] md:max-h-[calc(100vh-160px)] md:rounded-[28px] z-30 bg-white/95 backdrop-blur-xl border border-[#DDE7E2] shadow-[0_16px_48px_rgba(4,38,28,0.12)] overflow-hidden flex flex-col transition-all duration-300"
+              className={`fixed inset-x-0 bottom-14 ${selectedFactory ? 'max-h-[45vh]' : 'max-h-[72vh]'} rounded-t-[32px] md:top-20 md:left-6 md:right-auto md:bottom-20 md:w-[420px] md:max-h-[calc(100vh-160px)] md:rounded-[28px] z-30 bg-white/95 backdrop-blur-xl border border-[#DDE7E2] shadow-[0_16px_48px_rgba(4,38,28,0.12)] overflow-hidden flex flex-col transition-all duration-300`}
             >
               {selectedFactory ? (
                 <FactoryDetailPanel

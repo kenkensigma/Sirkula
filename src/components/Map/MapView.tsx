@@ -15,7 +15,7 @@ interface MapViewProps {
   isRadiusCircleVisible: boolean;
 }
 
-// Controller component to programmatically fly map with Google Maps-style close zoom
+// Controller component to programmatically fly map with optical centering and close zoom
 function MapController({
   selectedFactory,
   userLocation,
@@ -26,15 +26,43 @@ function MapController({
   const map = useMap();
 
   useEffect(() => {
+    if (!map) return;
+
     if (selectedFactory) {
-      // Zoom in closely like Google Maps (zoom 16)
-      map.flyTo([selectedFactory.latitude, selectedFactory.longitude], 16, {
+      // Close any open popup so map view remains clean and unobstructed
+      map.closePopup();
+
+      const zoom = 16.5;
+      const mapSize = map.getSize();
+      const isMobile = typeof window !== "undefined" ? window.innerWidth < 768 : true;
+
+      // Project factory coordinate to pixel space at target zoom
+      const targetPoint = map.project([selectedFactory.latitude, selectedFactory.longitude], zoom);
+
+      // On mobile, the bottom detail sheet covers ~50-55% of the viewport from the bottom.
+      // Top floating appbar covers ~75px.
+      // Position the factory marker at the optical center of the visible map area:
+      const visibleTop = 75; // px (below floating header)
+      const visibleBottom = mapSize.y * 0.52; // px (top of bottom sheet)
+      const targetCenterY = (visibleTop + visibleBottom) / 2; // e.g. ~260px from top
+      const pixelOffsetY = (mapSize.y / 2) - targetCenterY;
+
+      // On desktop (md:), the panel is on the left (w-[420px]), so we offset X to the visible right area
+      const visibleLeft = 450;
+      const visibleRight = mapSize.x;
+      const targetCenterX = isMobile ? mapSize.x * 0.5 : (visibleLeft + visibleRight) / 2;
+      const pixelOffsetX = (mapSize.x / 2) - targetCenterX;
+
+      const adjustedPoint = L.point(targetPoint.x - pixelOffsetX, targetPoint.y + pixelOffsetY);
+      const adjustedLatLng = map.unproject(adjustedPoint, zoom);
+
+      map.flyTo(adjustedLatLng, zoom, {
         duration: 1.2,
         easeLinearity: 0.25,
       });
     } else {
-      // Zoom back out to regional radar overview (zoom 12)
-      map.flyTo([userLocation.latitude, userLocation.longitude], 12, {
+      // Zoom back out to regional radar overview
+      map.flyTo([userLocation.latitude, userLocation.longitude], 12.5, {
         duration: 1.0,
       });
     }
@@ -134,7 +162,9 @@ export const MapView: React.FC<MapViewProps> = ({
     <div className="relative w-full h-full min-h-[450px] bg-slate-100">
       <MapContainer
         center={[USER_FARMER_LOCATION.latitude, USER_FARMER_LOCATION.longitude]}
-        zoom={12}
+        zoom={12.5}
+        zoomSnap={0.5}
+        zoomDelta={0.5}
         scrollWheelZoom={true}
         className="w-full h-full"
       >
@@ -170,7 +200,7 @@ export const MapView: React.FC<MapViewProps> = ({
           position={[USER_FARMER_LOCATION.latitude, USER_FARMER_LOCATION.longitude]}
           icon={gpsIcon}
         >
-          <Popup className="custom-popup">
+          <Popup className="custom-popup" autoPan={false}>
             <div className="p-3 text-slate-800">
               <span className="text-[10px] font-semibold text-emerald-800 uppercase tracking-wider block">
                 Titik GPS Peternak
@@ -201,10 +231,10 @@ export const MapView: React.FC<MapViewProps> = ({
               position={[factory.latitude, factory.longitude]}
               icon={createFactoryIcon(factory, isSelected)}
               eventHandlers={{
-                click: () => onSelectFactory(factory),
+                click: (e) => { onSelectFactory(factory); if (e.target && e.target.closePopup) e.target.closePopup(); },
               }}
             >
-              <Popup className="custom-popup">
+              <Popup className="custom-popup" autoPan={false}>
                 <div className="p-3 text-[#04261C] min-w-[220px]">
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="text-xs font-semibold text-[#0A4D3C] bg-[#F2F7F4] border border-[#DDE7E2] px-2 py-0.5 rounded-md">
