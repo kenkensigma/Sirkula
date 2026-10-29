@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   ArrowLeft,
@@ -254,8 +255,8 @@ function CircularStockGauge({
   );
 }
 
-export default function DashboardPage() {
-  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+function DashboardInner() {
+  const { user, isAuthenticated } = useAuth();
   const [transactions, setTransactions] = useState<Transaction[]>(DEFAULT_DEMO_TRANSACTIONS);
   const [impact, setImpact] = useState<ImpactSummary | null>(null);
 
@@ -453,26 +454,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Guest Mode Notice Banner if unauthenticated */}
-      {!isAuthenticated && !authLoading && (
-        <aside
-          aria-label="Informasi Mode Pratinjau"
-          className="bg-[#0A4D3C] text-white px-4 py-2 text-xs flex items-center justify-between border-b border-[#063125]"
-        >
-          <div className="flex items-center gap-2 max-w-xl">
-            <span className="w-2 h-2 rounded-full bg-[#34D399] animate-pulse shrink-0" />
-            <p className="truncate">
-              <strong>Mode Pratinjau:</strong> Menampilkan dashboard penjualan pabrik. Masuk untuk mengelola data akun Anda.
-            </p>
-          </div>
-          <Link
-            href="/login"
-            className="apple-press bg-white text-[#0A4D3C] hover:bg-[#F2F7F4] font-bold px-3 py-1.5 rounded-lg text-xs shrink-0"
-          >
-            Masuk
-          </Link>
-        </aside>
-      )}
+
 
       {/* Header */}
       <header className="sticky top-0 z-30 bg-[#F8FAF9] border-b border-[#DDE7E2]">
@@ -1079,4 +1061,25 @@ export default function DashboardPage() {
       )}
     </div>
   );
+}
+
+export default function DashboardPage() {
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!authLoading && (!isAuthenticated || user?.role !== "factory")) {
+      router.replace("/login");
+    }
+  }, [authLoading, isAuthenticated, router, user?.role]);
+
+  if (authLoading || !isAuthenticated || user?.role !== "factory") {
+    return (
+      <div className="min-h-screen bg-[#F8FAF9] text-[#04261C] flex items-center justify-center">
+        <div className="text-sm text-[#4A6359]">Mengalihkan ke halaman login...</div>
+      </div>
+    );
+  }
+
+  return <DashboardInner />;
 }
