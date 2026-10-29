@@ -73,7 +73,7 @@ export class ProfileRepository {
     input: UpdateProfileInput
   ): Promise<ProfileRow> {
     if (!isSupabaseConfigured()) {
-      for (const [email, u] of demoUsers.entries()) {
+      for (const [, u] of demoUsers.entries()) {
         if (u.id === userId) {
           if (input.name !== undefined) u.name = input.name;
           if (input.phone !== undefined) u.phone = input.phone;
@@ -90,7 +90,16 @@ export class ProfileRepository {
             created_at: u.created_at,
             updated_at: new Date().toISOString(),
           };
-          setDemoSession(updated);
+          setDemoSession({
+            id: u.id,
+            email: u.email,
+            name: u.name,
+            role: u.role,
+            phone: u.phone ?? null,
+            latitude: u.latitude ?? null,
+            longitude: u.longitude ?? null,
+            created_at: u.created_at,
+          });
           return updated;
         }
       }

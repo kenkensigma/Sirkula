@@ -125,7 +125,7 @@ export const FloatingAppbar: React.FC<FloatingAppbarProps> = ({
                 </>
               ) : (
                 <div className="flex items-center gap-1.5">
-                  <div className="flex items-center gap-1.5 bg-[#F2F7F4] border border-[#DDE7E2] px-2.5 py-1.5 rounded-xl text-xs">
+                  <Link href="/dashboard" className="apple-press flex items-center gap-1.5 bg-[#F2F7F4] hover:bg-[#E8F0EC] border border-[#DDE7E2] px-2.5 py-1.5 rounded-xl text-xs transition-colors" title="Buka Dashboard">
                     <div className="w-5 h-5 rounded-full bg-[#0A4D3C] text-white flex items-center justify-center font-bold text-[10px]">
                       {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
                     </div>
@@ -135,7 +135,7 @@ export const FloatingAppbar: React.FC<FloatingAppbarProps> = ({
                     <span className="hidden md:inline text-[10px] text-[#0A4D3C] font-semibold bg-white px-1.5 py-0.5 rounded border border-[#DDE7E2]">
                       {user?.role === "factory" ? "Pabrik" : "Peternak"}
                     </span>
-                  </div>
+                  </Link>
 
                   <button
                     onClick={() => logout()}
