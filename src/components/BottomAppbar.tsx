@@ -25,14 +25,14 @@ export const BottomAppbar: React.FC<BottomAppbarProps> = ({
 }) => {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-t border-[#DDE7E2] pb-[env(safe-area-inset-bottom)] transition-all shadow-[0_-4px_20px_rgba(4,38,28,0.04)]">
-      <div className="max-w-md mx-auto flex items-center justify-around py-1 px-3" role="tablist" aria-label="Navigasi utama">
+      <div className="max-w-md mx-auto flex items-center justify-around py-1 px-2" role="tablist" aria-label="Navigasi utama">
         {tabs.map(({ key, label, Icon }) => {
           const isActive = activeTab === key;
           return (
             <button
               key={key}
               onClick={() => onTabChange(key)}
-              className="apple-press flex flex-col items-center justify-center gap-1 py-1.5 px-4 min-h-[48px] min-w-[64px] rounded-2xl relative transition-all group focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
+              className="apple-press flex flex-col items-center justify-center gap-0.5 py-1.5 px-2 min-h-[44px] min-w-[56px] rounded-2xl relative transition-all group focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
               role="tab"
               aria-selected={isActive}
               aria-label={label}
@@ -53,7 +53,7 @@ export const BottomAppbar: React.FC<BottomAppbarProps> = ({
                 )}
               </div>
               <span
-                className={`text-xs tracking-tight transition-colors ${
+                className={`text-[11px] tracking-tight transition-colors ${
                   isActive
                     ? "font-bold text-[#0A4D3C]"
                     : "font-medium text-[#4A6359] group-hover:text-[#04261C]"
