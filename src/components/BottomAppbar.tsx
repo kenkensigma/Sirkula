@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { Map, Layers, ShieldCheck, Leaf } from "lucide-react";
+import Link from "next/link";
+import { Map, Layers, ShieldCheck, Leaf, LayoutDashboard } from "lucide-react";
 
 export type NavTab = "map" | "catalog" | "escrow" | "sdg";
 
@@ -14,7 +15,7 @@ interface BottomAppbarProps {
 const tabs: { key: NavTab; label: string; Icon: typeof Map }[] = [
   { key: "map", label: "Peta", Icon: Map },
   { key: "catalog", label: "Katalog", Icon: Layers },
-  { key: "escrow", label: "Escrow", Icon: ShieldCheck },
+  { key: "escrow", label: "Pesanan", Icon: ShieldCheck },
   { key: "sdg", label: "Dampak SDG", Icon: Leaf },
 ];
 
@@ -25,14 +26,14 @@ export const BottomAppbar: React.FC<BottomAppbarProps> = ({
 }) => {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-t border-[#DDE7E2] pb-[env(safe-area-inset-bottom)] transition-all shadow-[0_-4px_20px_rgba(4,38,28,0.04)]">
-      <div className="max-w-md mx-auto flex items-center justify-around py-1 px-3" role="tablist" aria-label="Navigasi utama">
+      <div className="max-w-lg mx-auto flex items-center justify-around py-1 px-2" role="tablist" aria-label="Navigasi utama">
         {tabs.map(({ key, label, Icon }) => {
           const isActive = activeTab === key;
           return (
             <button
               key={key}
               onClick={() => onTabChange(key)}
-              className="apple-press flex flex-col items-center justify-center gap-1 py-1.5 px-4 min-h-[48px] min-w-[64px] rounded-2xl relative transition-all group focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
+              className="apple-press flex flex-col items-center justify-center gap-1 py-1.5 px-3 min-h-[48px] min-w-[56px] rounded-2xl relative transition-all group focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
               role="tab"
               aria-selected={isActive}
               aria-label={label}
@@ -67,6 +68,24 @@ export const BottomAppbar: React.FC<BottomAppbarProps> = ({
             </button>
           );
         })}
+
+        {/* Dedicated 5th tab: Direct Link to Dashboard */}
+        <Link
+          href="/dashboard"
+          className="apple-press flex flex-col items-center justify-center gap-1 py-1.5 px-3 min-h-[48px] min-w-[56px] rounded-2xl relative transition-all group focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
+          title="Buka Dashboard Sirkula"
+          aria-label="Dashboard"
+        >
+          <div className="relative">
+            <LayoutDashboard
+              className="w-5 h-5 text-[#0A4D3C] transition-transform duration-200 group-hover:scale-110"
+              strokeWidth={2}
+            />
+          </div>
+          <span className="text-xs tracking-tight font-bold text-[#0A4D3C]">
+            Dashboard
+          </span>
+        </Link>
       </div>
     </nav>
   );

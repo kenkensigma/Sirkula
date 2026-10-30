@@ -82,6 +82,7 @@ export class BatchService {
 
     const newBatch = await BatchRepository.create(client, {
       factory_id: factoryId,
+      factory_name: factoryName,
       quantity_kg: input.quantity_kg,
       reserved_kg: 0,
       sold_kg: 0,
@@ -92,7 +93,7 @@ export class BatchService {
       expires_at: expiresAt,
       description: input.description ?? null,
       status: "available",
-    });
+    } as Parameters<typeof BatchRepository.create>[1]);
 
     return this.formatBatchResponse({
       ...newBatch,

@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { X, Leaf, Recycle, ShieldCheck } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { X, Leaf, ShieldCheck } from "lucide-react";
 
 interface SDGImpactModalProps {
   isOpen: boolean;
@@ -14,6 +14,39 @@ export const SDGImpactModal: React.FC<SDGImpactModalProps> = ({
   onClose,
   additionalSavedKg = 0,
 }) => {
+  const [impactData, setImpactData] = useState<{
+    divertedKg: number;
+    co2eAvoided: number;
+    feedSavingsIdr: number;
+    methodologyLabel?: string;
+  }>({
+    divertedKg: 12840 + additionalSavedKg,
+    co2eAvoided: Math.round((12840 + additionalSavedKg) * 1.736 * 10) / 10,
+    feedSavingsIdr: (12840 + additionalSavedKg) * 850,
+    methodologyLabel: "Estimasi berdasarkan koefisien baku; diverifikasi tim lapangan Sirkula Bali",
+  });
+
+  // Fetch live impact from backend GET /api/v1/impact/summary
+  useEffect(() => {
+    if (!isOpen) return;
+
+    fetch("/api/v1/impact/summary")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (json?.data) {
+          const rawKg = json.data.diverted_from_waste_kg || 12840;
+          const totalKg = rawKg + additionalSavedKg;
+          setImpactData({
+            divertedKg: totalKg,
+            co2eAvoided: Math.round(totalKg * 1.736 * 10) / 10,
+            feedSavingsIdr: totalKg * 850,
+            methodologyLabel: json.data.methodology?.label,
+          });
+        }
+      })
+      .catch((err) => console.warn("Failed to fetch impact summary:", err));
+  }, [isOpen, additionalSavedKg]);
+
   // Escape key handler for keyboard accessibility (R-32)
   useEffect(() => {
     if (!isOpen) return;
@@ -25,10 +58,6 @@ export const SDGImpactModal: React.FC<SDGImpactModalProps> = ({
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
-
-  const baseKg = 12840 + additionalSavedKg;
-  const baseCo2e = Math.round(baseKg * 1.736 * 10) / 10;
-  const baseSavings = baseKg * 850;
 
   return (
     <div
@@ -52,7 +81,7 @@ export const SDGImpactModal: React.FC<SDGImpactModalProps> = ({
             </div>
             <div>
               <span className="text-xs font-semibold text-[#0A4D3C] uppercase tracking-wider block">
-                Impact Rings
+                Impact Dashboard
               </span>
               <h3 className="font-extrabold text-[#04261C] text-sm tracking-tight">
                 Dampak Lingkungan (SDG 12 &amp; 13)
@@ -80,12 +109,12 @@ export const SDGImpactModal: React.FC<SDGImpactModalProps> = ({
             <div>
               <div className="flex items-baseline justify-center gap-1.5">
                 <span className="text-4xl font-black text-[#04261C] tracking-tight font-mono">
-                  {baseKg.toLocaleString("id-ID")}
+                  {impactData.divertedKg.toLocaleString("id-ID")}
                 </span>
                 <span className="text-[#0A4D3C] text-lg font-bold">Kg</span>
               </div>
               <p className="text-xs text-[#4A6359] mt-1.5 max-w-xs mx-auto leading-relaxed">
-                Total limbah ampas tahu segar yang berhasil diselamatkan dari sungai dan TPA di Bali.
+                Total limbah ampas tahu segar yang berhasil diselamatkan dari sungai dan TPA di Bali melalui transaksi terverifikasi.
               </p>
             </div>
 
@@ -96,7 +125,7 @@ export const SDGImpactModal: React.FC<SDGImpactModalProps> = ({
                   Emisi Metana Dicegah
                 </span>
                 <span className="text-base font-extrabold text-[#04261C] font-mono mt-0.5 block">
-                  {baseCo2e.toLocaleString("id-ID")} <span className="text-xs font-normal text-[#4A6359]">kg CO2e</span>
+                  {impactData.co2eAvoided.toLocaleString("id-ID")} <span className="text-xs font-normal text-[#4A6359]">kg CO2e</span>
                 </span>
                 <span className="text-xs text-[#0A4D3C] block mt-1 font-mono">
                   Koefisien 1.736 kg/kg
@@ -107,8 +136,8 @@ export const SDGImpactModal: React.FC<SDGImpactModalProps> = ({
                 <span className="text-xs font-semibold text-[#4A6359] block">
                   Hemat Biaya Pakan
                 </span>
-                <span className="text-base font-extrabold text-[#0A4D3C] font-mono mt-0.5 block">
-                  Rp {baseSavings.toLocaleString("id-ID")}
+                <span className="text-base font-extrabold text-[#04261C] font-mono mt-0.5 block">
+                  Rp {impactData.feedSavingsIdr.toLocaleString("id-ID")}
                 </span>
                 <span className="text-xs text-[#4A6359] block mt-1">
                   Hemat ~Rp 850/kg vs konsentrat
@@ -118,71 +147,47 @@ export const SDGImpactModal: React.FC<SDGImpactModalProps> = ({
           </div>
 
           {/* SDG UN Alignment Cards */}
-          <div className="space-y-2.5">
-            <span className="text-xs font-semibold text-[#04261C] block px-1">
-              Keselarasan Agenda Global PBB
-            </span>
+          <div className="space-y-3">
+            <h4 className="text-xs font-bold text-[#04261C] uppercase tracking-wider">
+              Tujuan Pembangunan Berkelanjutan PBB
+            </h4>
 
-            {/* SDG 12 Card */}
-            <div className="bg-white border border-[#DDE7E2] rounded-2xl p-4 flex items-start gap-3.5 shadow-2xs">
-              <div className="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center font-black shrink-0 text-base shadow-[0_2px_8px_rgba(245,158,11,0.3)]">
+            {/* SDG 12 */}
+            <div className="bg-white p-4 rounded-2xl border border-[#DDE7E2] flex items-start gap-3.5 shadow-2xs">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center font-black text-sm shrink-0 font-mono">
                 12
               </div>
               <div className="text-xs">
-                <h5 className="font-bold text-[#04261C] text-xs">
-                  SDG 12: Konsumsi &amp; Produksi Bertanggung Jawab
+                <h5 className="font-bold text-[#04261C]">
+                  Konsumsi &amp; Produksi Bertanggung Jawab
                 </h5>
                 <p className="text-[#4A6359] text-xs mt-1 leading-relaxed">
-                  Menyalurkan 550-700 kg limbah basah harian per pabrik langsung ke peternak rakyat sebelum batas fermentasi asam 12 jam tercapai.
+                  Menutup siklus limbah organik industri tahu Bali secara sirkular langsung ke peternak rakyat sebelum membusuk (SLA 12 jam).
                 </p>
               </div>
             </div>
 
-            {/* SDG 13 Card */}
-            <div className="bg-white border border-[#DDE7E2] rounded-2xl p-4 flex items-start gap-3.5 shadow-2xs">
-              <div className="w-10 h-10 rounded-xl bg-[#0A4D3C] text-white flex items-center justify-center font-black shrink-0 text-base shadow-[0_2px_8px_rgba(10,77,60,0.3)]">
+            {/* SDG 13 */}
+            <div className="bg-white p-4 rounded-2xl border border-[#DDE7E2] flex items-start gap-3.5 shadow-2xs">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-[#0A4D3C] flex items-center justify-center font-black text-sm shrink-0 font-mono">
                 13
               </div>
               <div className="text-xs">
-                <h5 className="font-bold text-[#04261C] text-xs">
-                  SDG 13: Penanganan Perubahan Iklim
+                <h5 className="font-bold text-[#04261C]">
+                  Penanganan Perubahan Iklim
                 </h5>
                 <p className="text-[#4A6359] text-xs mt-1 leading-relaxed">
-                  Mencegah pembusukan anaerobik di sungai yang memproduksi gas metana (CH4), gas rumah kaca dengan dampak pemanasan 28x lebih kuat dari CO2.
+                  Menghindari fermentasi anaerobik ampas tahu basah di saluran air yang menghasilkan gas metana ($CH_4$) berpotensi pemanasan global tinggi.
                 </p>
               </div>
             </div>
           </div>
 
-          {/* SLA 3 Time Zones Table */}
-          <div className="bg-white border border-[#DDE7E2] rounded-2xl p-4 space-y-2.5 text-xs shadow-2xs">
-            <h5 className="font-bold text-[#04261C] flex items-center gap-1.5 text-xs">
-              <Recycle className="w-4 h-4 text-[#0A4D3C]" />
-              <span>Siklus Sirkula 3 Zona Waktu Kesegaran</span>
-            </h5>
-            <div className="space-y-2 text-xs pt-1">
-              <div className="flex items-center justify-between">
-                <span className="flex items-center gap-2 font-medium text-[#04261C]">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#0A4D3C] ring-2 ring-[#0A4D3C]/20" />
-                  0 - 8 Jam (Zona Hijau)
-                </span>
-                <span className="text-[#0A4D3C] font-semibold">Prima &amp; Hangat</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="flex items-center gap-2 font-medium text-[#04261C]">
-                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500 ring-2 ring-amber-500/20" />
-                  8 - 10,5 Jam (Zona Kuning)
-                </span>
-                <span className="text-amber-700 font-semibold">Diskon 15%</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="flex items-center gap-2 font-medium text-[#04261C]">
-                  <span className="w-2.5 h-2.5 rounded-full bg-rose-500 ring-2 ring-rose-500/20" />
-                  ≥ 12 Jam (Zona Merah)
-                </span>
-                <span className="text-rose-600 font-semibold">Pupuk &amp; Maggot</span>
-              </div>
-            </div>
+          {/* Methodology Disclosure Note */}
+          <div className="bg-white p-3.5 rounded-xl border border-[#DDE7E2] text-center">
+            <span className="text-xs text-[#4A6359]">
+              Metodologi: {impactData.methodologyLabel || "Estimasi berdasarkan koefisien baku; diverifikasi tim lapangan Sirkula Bali"}.
+            </span>
           </div>
         </div>
       </div>

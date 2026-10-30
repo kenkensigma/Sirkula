@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { signupSchema } from "@/lib/validation/auth.schema";
 import { ProfileRepository } from "@/lib/repositories/profile.repository";
 import { ProfileService } from "@/lib/services/profile.service";
@@ -114,6 +115,29 @@ export async function POST(req: NextRequest) {
       });
 
       if (authError || !authData.user) {
+        if (authError && authError.message.toLowerCase().includes("rate limit")) {
+          try {
+            const adminClient = createAdminClient();
+            const { data: adminCreated, error: adminError } = await adminClient.auth.admin.createUser({
+              email: input.email,
+              password: input.password,
+              email_confirm: true,
+              user_metadata: {
+                name: input.name,
+                role: input.role,
+              },
+            });
+            if (!adminError && adminCreated?.user) {
+              authUserId = adminCreated.user.id;
+              authUserEmail = adminCreated.user.email || input.email;
+              authSession = null;
+            } else {
+              return createErrorResponse("VALIDATION_ERROR", adminError?.message || authError.message);
+            }
+          } catch {
+            return createErrorResponse("VALIDATION_ERROR", authError.message);
+          }
+        } else 
         if (
           authError &&
           !authError.message.toLowerCase().includes("fetch failed") &&

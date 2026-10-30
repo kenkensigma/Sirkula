@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Compass, Layers, ChevronDown, SlidersHorizontal, LogIn, UserPlus, LogOut } from "lucide-react";
+import { Compass, Layers, ChevronDown, SlidersHorizontal, LogIn, UserPlus, LogOut, LayoutDashboard } from "lucide-react";
 import { NavTab } from "./BottomAppbar";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -40,7 +40,7 @@ export const FloatingAppbar: React.FC<FloatingAppbarProps> = ({
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 pointer-events-none">
-      <div className="pointer-events-auto mx-3 mt-3 sm:mx-5 sm:mt-4 max-w-2xl lg:max-w-3xl xl:mx-auto">
+      <div className="pointer-events-auto mx-3 mt-3 sm:mx-5 sm:mt-4 max-w-4xl lg:max-w-5xl xl:max-w-6xl xl:mx-auto">
         {/* Apple Dynamic Island Floating Card */}
         <div className="apple-glass rounded-2xl sm:rounded-[22px] px-3.5 py-2.5 sm:px-4 transition-all duration-300">
           {/* Main row */}
@@ -61,13 +61,13 @@ export const FloatingAppbar: React.FC<FloatingAppbarProps> = ({
             </div>
 
             {/* GPS Signal Status Badge */}
-            <div className="hidden sm:inline-flex items-center gap-2 text-xs text-[#063125] bg-[#F2F7F4] px-3 py-1 rounded-full border border-[#DDE7E2]">
+            <div className="hidden md:inline-flex items-center gap-2 text-xs text-[#063125] bg-[#F2F7F4] px-3 py-1 rounded-full border border-[#DDE7E2] whitespace-nowrap shrink-0">
               <span className="h-2 w-2 rounded-full bg-[#0A4D3C]"></span>
               <span className="font-semibold tracking-tight">GPS 15 km Aktif</span>
             </div>
 
             {/* Controls */}
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 shrink-0">
               {/* Filter toggle button */}
               <button
                 onClick={() => setShowFilters((p) => !p)}
@@ -102,6 +102,18 @@ export const FloatingAppbar: React.FC<FloatingAppbarProps> = ({
                 />
               </button>
 
+              {/* Dashboard Link — only show standalone when not logged in */}
+              {!isAuthenticated && (
+                <Link
+                  href="/dashboard"
+                  className="apple-press flex items-center gap-1.5 px-3 py-1.5 min-h-[40px] rounded-xl text-xs font-semibold bg-white text-[#04261C] hover:bg-[#F2F7F4] border border-[#DDE7E2] shadow-2xs transition-colors focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
+                  title="Buka Dashboard Sirkula"
+                >
+                  <LayoutDashboard className="w-3.5 h-3.5 text-[#0A4D3C]" />
+                  <span className="hidden sm:inline">Dashboard</span>
+                </Link>
+              )}
+
               {/* Auth Status & Login CTA */}
               {!isAuthenticated ? (
                 <>
@@ -124,7 +136,7 @@ export const FloatingAppbar: React.FC<FloatingAppbarProps> = ({
                   </Link>
                 </>
               ) : (
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 shrink-0">
                   <Link href="/dashboard" className="apple-press flex items-center gap-1.5 bg-[#F2F7F4] hover:bg-[#E8F0EC] border border-[#DDE7E2] px-2.5 py-1.5 rounded-xl text-xs transition-colors" title="Buka Dashboard">
                     <div className="w-5 h-5 rounded-full bg-[#0A4D3C] text-white flex items-center justify-center font-bold text-[10px]">
                       {user?.name ? user.name.charAt(0).toUpperCase() : "U"}

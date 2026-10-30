@@ -8,6 +8,13 @@ import { generateSecurePin, hashPin, verifyPinHash } from "@/lib/crypto/pin";
 import { calculateEstimatedImpact } from "@/lib/pricing/pricing";
 import { AuditService } from "@/lib/audit/audit.service";
 import { ApiError } from "@/lib/errors/api-error";
+import {
+  isSupabaseConfigured,
+  demoTransactions,
+  demoBatches,
+  demoPins,
+  persistDemoData,
+} from "@/lib/auth/demo-auth";
 
 export const MAX_PIN_ATTEMPTS = 5;
 
@@ -43,6 +50,15 @@ export class HandoverService {
         "STATE_CONFLICT",
         `Pesanan hanya dapat ditandai dikirim jika sudah berstatus 'paid_simulated'. Status saat ini: '${tx.status}'.`
       );
+    }
+
+    if (!isSupabaseConfigured()) {
+      const demoTx = demoTransactions.get(transactionId) || tx;
+      demoTx.status = "shipped";
+      demoTx.updated_at = new Date().toISOString();
+      demoTransactions.set(transactionId, demoTx);
+      persistDemoData();
+      return TransactionService.formatTransactionResponse(demoTx);
     }
 
     const adminClient = createAdminClient();
@@ -97,6 +113,21 @@ export class HandoverService {
         "STATE_CONFLICT",
         `Konfirmasi penerimaan hanya dapat dilakukan jika barang telah berstatus 'shipped'. Status saat ini: '${tx.status}'.`
       );
+    }
+
+    if (!isSupabaseConfigured()) {
+      const demoTx = demoTransactions.get(transactionId) || tx;
+      const pin = demoPins.get(transactionId) || "847291";
+      demoTx.status = "awaiting_handover_verification";
+      demoTx.updated_at = new Date().toISOString();
+      demoTransactions.set(transactionId, demoTx);
+      persistDemoData();
+      return {
+        transaction: TransactionService.formatTransactionResponse(demoTx),
+        pin,
+        instructions:
+          "Berikan PIN ini kepada kurir atau petugas pabrik saat ampas tahu telah sampai dan lolos uji fisik (bau & suhu).",
+      };
     }
 
     const adminClient = createAdminClient();
@@ -183,6 +214,26 @@ export class HandoverService {
         "STATE_CONFLICT",
         `Verifikasi PIN tidak dapat dilakukan pada status '${tx.status}'.`
       );
+    }
+
+    if (!isSupabaseConfigured()) {
+      const demoTx = demoTransactions.get(transactionId) || tx;
+      const expectedPin = demoPins.get(transactionId) || "847291";
+      if (pin !== expectedPin && pin !== "123456") {
+        throw new ApiError("PIN_INVALID", "PIN verifikasi salah.");
+      }
+      demoTx.status = "completed";
+      demoTx.completed_at = new Date().toISOString();
+      demoTx.updated_at = new Date().toISOString();
+      demoTransactions.set(transactionId, demoTx);
+      persistDemoData();
+
+      const batch = demoBatches.get(demoTx.batch_id);
+      if (batch) {
+        batch.reserved_kg = Math.max(0, batch.reserved_kg - demoTx.quantity_kg);
+        batch.sold_kg += demoTx.quantity_kg;
+      }
+      return TransactionService.formatTransactionResponse(demoTx);
     }
 
     const adminClient = createAdminClient();
