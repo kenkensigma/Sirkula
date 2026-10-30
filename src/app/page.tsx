@@ -253,7 +253,7 @@ export default function Home() {
             {/* Apple Maps Style GPS Re-Center Floating Button */}
             <button
               onClick={() => setSelectedFactory(null)}
-              className="apple-press absolute bottom-20 right-4 z-50 safari-stack-fix w-11 h-11 rounded-full bg-white/95 backdrop-blur-md border border-[#DDE7E2] flex items-center justify-center text-[#04261C] shadow-[0_4px_16px_rgba(4,38,28,0.1)] hover:bg-[#F2F7F4] focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
+              className="apple-press absolute bottom-20 right-4 z-50 safari-stack-fix w-11 h-11 rounded-full bg-white/95 backdrop-blur-md border border-[#DDE7E2] flex items-center justify-center text-[#04261C] shadow-[0_4px_16px_rgba(4,38,28,0.1)] hover:bg-[#F2F7F4] focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2 hidden sm:flex"
               title="Pusatkan Radar ke GPS"
               aria-label="Pusatkan Radar ke GPS"
             >

@@ -13,7 +13,7 @@ interface BottomAppbarProps {
 
 const tabs: { key: NavTab; label: string; Icon: typeof Map }[] = [
   { key: "map", label: "Peta", Icon: Map },
-  { key: "catalog", label: "Katalog", Icon: Layers },
+  { key: "catalog", label: "Pabrik", Icon: Layers },
   { key: "escrow", label: "Escrow", Icon: ShieldCheck },
   { key: "sdg", label: "Dampak SDG", Icon: Leaf },
 ];
