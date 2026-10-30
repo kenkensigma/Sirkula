@@ -300,11 +300,15 @@ export default function Home() {
             <aside
               aria-label="Panel Pabrik"
               onTransitionEnd={handlePanelTransitionEnd}
-              className={`fixed inset-x-0 bottom-14 ${selectedFactory ? 'max-h-[45vh]' : 'max-h-[72vh]'} rounded-t-[32px] md:top-20 md:left-6 md:right-auto md:bottom-20 md:w-[420px] md:max-h-[calc(100vh-160px)] md:rounded-[28px] z-30 bg-white/95 backdrop-blur-xl border border-[#DDE7E2] shadow-[0_16px_48px_rgba(4,38,28,0.12)] overflow-hidden flex flex-col transition-all duration-300 ease-out ${
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              className={`fixed inset-x-0 bottom-14 ${selectedFactory ? 'max-h-[45vh]' : 'max-h-[72vh]'} rounded-t-[32px] md:top-20 md:left-6 md:right-auto md:bottom-20 md:w-[420px] md:max-h-[calc(100vh-160px)] md:rounded-[28px] z-30 bg-white/95 backdrop-blur-xl border border-[#DDE7E2] shadow-[0_16px_48px_rgba(4,38,28,0.12)] overflow-hidden flex flex-col transition-transform duration-300 ease-out ${dragOffset > 0 ? 'transition-none' : ''} ${
                 isFactoryListOpen
                   ? 'translate-y-0 opacity-100 pointer-events-auto md:translate-x-0 md:opacity-100 md:pointer-events-auto'
                   : 'translate-y-full opacity-0 pointer-events-none md:-translate-x-full md:opacity-0 md:pointer-events-none'
               }`}
+              style={dragOffset > 0 ? { transform: `translateY(${dragOffset}px)` } : undefined}
             >
               {selectedFactory ? (
                 <FactoryDetailPanel
