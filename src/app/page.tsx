@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback, useRef } from "react";
 import { FloatingAppbar } from "@/components/FloatingAppbar";
 import { FactoryMap } from "@/components/Map";
 import { FactoryCard } from "@/components/FactoryCard";
@@ -33,7 +33,61 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<NavTab>("map");
   
   // State for the DOM panel, toggled from the Floating Appbar
-  const [isFactoryListOpen, setIsFactoryListOpen] = useState<boolean>(false);
+  const [isFactoryListOpen, setIsFactoryListOpen] = useState(false);
+  const [shouldRenderPanel, setShouldRenderPanel] = useState(false);
+  const isPanelClosingRef = useRef(false);
+  const touchStartYRef = useRef<number | null>(null);
+  const [dragOffset, setDragOffset] = useState(0);
+
+  const openPanel = useCallback(() => {
+    setShouldRenderPanel(true);
+    isPanelClosingRef.current = false;
+    setDragOffset(0);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (!isPanelClosingRef.current) {
+          setIsFactoryListOpen(true);
+        }
+      });
+    });
+  }, []);
+
+  const closePanel = useCallback(() => {
+    isPanelClosingRef.current = true;
+    setIsFactoryListOpen(false);
+    setDragOffset(0);
+  }, []);
+
+  const handlePanelTransitionEnd = useCallback((e: React.TransitionEvent<HTMLDivElement>) => {
+    if (e.propertyName === 'transform' && isPanelClosingRef.current) {
+      setShouldRenderPanel(false);
+      isPanelClosingRef.current = false;
+    }
+  }, []);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (!isFactoryListOpen) return;
+    touchStartYRef.current = e.touches[0].clientY;
+  }, [isFactoryListOpen]);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!isFactoryListOpen || touchStartYRef.current === null) return;
+    const currentY = e.touches[0].clientY;
+    const delta = currentY - touchStartYRef.current;
+    if (delta > 0) {
+      setDragOffset(delta);
+    }
+  }, [isFactoryListOpen]);
+
+  const handleTouchEnd = useCallback(() => {
+    if (!isFactoryListOpen) return;
+    touchStartYRef.current = null;
+    if (dragOffset > 100) {
+      closePanel();
+    } else {
+      setDragOffset(0);
+    }
+  }, [isFactoryListOpen, dragOffset, closePanel]);
 
   // Location permission state
   const [isLocationGranted, setIsLocationGranted] = useState<boolean>(false);
@@ -156,7 +210,13 @@ export default function Home() {
       {/* Apple Dynamic Island Floating Appbar */}
       <FloatingAppbar
         isFactoryListOpen={isFactoryListOpen}
-        onToggleFactoryList={() => setIsFactoryListOpen((prev) => !prev)}
+        onToggleFactoryList={() => {
+          if (isFactoryListOpen) {
+            closePanel();
+          } else {
+            openPanel();
+          }
+        }}
         factoriesCount={filteredFactories.length}
         activeFilter={activeFilter}
         onFilterChange={handleFilterChange}
@@ -181,7 +241,7 @@ export default function Home() {
                 selectedFactory={selectedFactory}
                 onSelectFactory={(fac) => {
                   setSelectedFactory(fac);
-                  setIsFactoryListOpen(true);
+                  openPanel();
                 }}
                 onOrderFactory={handleOrderFactory}
                 isRadiusCircleVisible={isRadiusCircleVisible}
@@ -226,7 +286,7 @@ export default function Home() {
             {/* Reopen Sheet Capsule Button */}
             {!isFactoryListOpen && (
               <button
-                onClick={() => setIsFactoryListOpen(true)}
+                onClick={openPanel}
                 className="apple-press absolute bottom-20 left-4 z-20 bg-white/95 backdrop-blur-md border border-[#DDE7E2] text-[#04261C] px-4 py-2.5 rounded-full shadow-[0_4px_16px_rgba(4,38,28,0.1)] text-xs font-bold flex items-center gap-2 hover:bg-[#F2F7F4] focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
               >
                 <Layers className="w-4 h-4 text-[#0A4D3C]" />
@@ -236,16 +296,21 @@ export default function Home() {
           </main>
 
           {/* Sheet: Factory List / Detail Panel (Placed outside main to prevent overflow clipping) */}
-          {isFactoryListOpen && (
+          {shouldRenderPanel && (
             <aside
               aria-label="Panel Pabrik"
-              className={`fixed inset-x-0 bottom-14 ${selectedFactory ? 'max-h-[45vh]' : 'max-h-[72vh]'} rounded-t-[32px] md:top-20 md:left-6 md:right-auto md:bottom-20 md:w-[420px] md:max-h-[calc(100vh-160px)] md:rounded-[28px] z-30 bg-white/95 backdrop-blur-xl border border-[#DDE7E2] shadow-[0_16px_48px_rgba(4,38,28,0.12)] overflow-hidden flex flex-col transition-all duration-300`}
+              onTransitionEnd={handlePanelTransitionEnd}
+              className={`fixed inset-x-0 bottom-14 ${selectedFactory ? 'max-h-[45vh]' : 'max-h-[72vh]'} rounded-t-[32px] md:top-20 md:left-6 md:right-auto md:bottom-20 md:w-[420px] md:max-h-[calc(100vh-160px)] md:rounded-[28px] z-30 bg-white/95 backdrop-blur-xl border border-[#DDE7E2] shadow-[0_16px_48px_rgba(4,38,28,0.12)] overflow-hidden flex flex-col transition-all duration-300 ease-out ${
+                isFactoryListOpen
+                  ? 'translate-y-0 opacity-100 pointer-events-auto md:translate-x-0 md:opacity-100 md:pointer-events-auto'
+                  : 'translate-y-full opacity-0 pointer-events-none md:-translate-x-full md:opacity-0 md:pointer-events-none'
+              }`}
             >
               {selectedFactory ? (
                 <FactoryDetailPanel
                   factory={selectedFactory}
                   onBack={() => setSelectedFactory(null)}
-                  onClose={() => setIsFactoryListOpen(false)}
+                  onClose={closePanel}
                   onOrder={handleOrderFactory}
                   userLocation={effectiveUserLocation}
                 />
@@ -267,7 +332,7 @@ export default function Home() {
                       </p>
                     </div>
                     <button
-                      onClick={() => setIsFactoryListOpen(false)}
+                      onClick={closePanel}
                       className="apple-press p-2 min-h-[40px] min-w-[40px] rounded-full bg-[#E8F0EC] hover:bg-[#DDE7E2] text-[#04261C] transition-colors flex items-center justify-center focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
                       title="Tutup Panel"
                       aria-label="Tutup Panel"
@@ -326,7 +391,7 @@ export default function Home() {
                 onSelect={(fac) => {
                   setSelectedFactory(fac);
                   setActiveTab("map");
-                  setIsFactoryListOpen(true);
+                  openPanel();
                 }}
                 onOrder={handleOrderFactory}
                 userLocation={effectiveUserLocation}
