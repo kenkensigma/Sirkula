@@ -23,7 +23,6 @@ import {
   X, 
   Leaf,
   RefreshCw,
-  Loader2,
   Navigation,
   Layers,
 } from "lucide-react";

@@ -9,7 +9,6 @@ import {
   Calendar,
   ChevronRight,
   ShieldCheck,
-  TrendingUp,
   ShoppingBag,
   Leaf,
   Wallet,
