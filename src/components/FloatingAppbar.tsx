@@ -141,7 +141,7 @@ export const FloatingAppbar: React.FC<FloatingAppbarProps> = ({
 
           {/* Location Permission Notification */}
           {!isLocationGranted && (
-            <div className="mt-2 pt-2 border-t border-[#DDE7E2] flex items-center justify-between gap-2 bg-[#F2F7F4] rounded-xl px-3 py-2">
+            <div className="mt-2 pt-2 border-t border-[#DDE7E2] flex items-center justify-between gap-2 bg-[#F2F7F4] rounded-xl px-3 py-2 block sm:hidden">
               <div className="flex items-center gap-2 min-w-0">
                 <Navigation2 className="w-4 h-4 text-[#0A4D3C] shrink-0" />
                 <p className="text-xs font-semibold text-[#04261C] truncate">
