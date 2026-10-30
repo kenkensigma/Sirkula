@@ -106,8 +106,8 @@ export const FactoryDetailPanel: React.FC<FactoryDetailPanelProps> = ({
 
   return (
     <div className="flex flex-col h-full bg-white text-[#04261C] animate-in fade-in slide-in-from-right-4 duration-300">
-      {/* Sheet Grabber Handle — draggable */}
-      <div data-sheet-handle className="pt-2 pb-1 bg-white shrink-0 cursor-grab active:cursor-grabbing touch-none">
+      {/* Sheet Grabber Handle */}
+      <div className="pt-2 pb-1 bg-white shrink-0">
         <div className="apple-sheet-handle" />
       </div>
 

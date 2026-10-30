@@ -5,7 +5,6 @@ import { FloatingAppbar } from "@/components/FloatingAppbar";
 import { FactoryMap } from "@/components/Map";
 import { FactoryCard } from "@/components/FactoryCard";
 import { FactoryDetailPanel } from "@/components/FactoryDetailPanel";
-import { BottomSheet } from "@/components/BottomSheet";
 import { BottomAppbar, NavTab } from "@/components/BottomAppbar";
 import { OrderDrawer, ActiveOrder } from "@/components/OrderDrawer";
 import { EscrowVerificationModal } from "@/components/EscrowVerificationModal";
@@ -203,7 +202,7 @@ export default function Home() {
 
             {/* Location Permission Notification on Map */}
             {!isLocationGranted && (
-              <div className="absolute top-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-20 bg-white/95 backdrop-blur-md border border-[#DDE7E2] rounded-2xl p-4 shadow-[0_8px_30px_rgba(4,38,28,0.12)] animate-in fade-in slide-in-from-top-2 duration-300 hidden sm:block">
+              <div className="absolute top-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-20 bg-white/95 backdrop-blur-md border border-[#DDE7E2] rounded-2xl p-4 shadow-[0_8px_30px_rgba(4,38,28,0.12)] animate-in fade-in slide-in-from-top-2 duration-300">
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 rounded-xl bg-[#F2F7F4] border border-[#DDE7E2] flex items-center justify-center shrink-0">
                     <Navigation className="w-5 h-5 text-[#0A4D3C]" />
@@ -236,12 +235,12 @@ export default function Home() {
             )}
           </main>
 
-          {/* Sheet: Factory List / Detail Panel */}
-          <BottomSheet
-            isOpen={isFactoryListOpen}
-            onClose={() => setIsFactoryListOpen(false)}
-            maxHeightClass={selectedFactory ? 'max-h-[45vh]' : 'max-h-[72vh]'}
-          >
+          {/* Sheet: Factory List / Detail Panel (Placed outside main to prevent overflow clipping) */}
+          {isFactoryListOpen && (
+            <aside
+              aria-label="Panel Pabrik"
+              className={`fixed inset-x-0 bottom-14 ${selectedFactory ? 'max-h-[45vh]' : 'max-h-[72vh]'} rounded-t-[32px] md:top-20 md:left-6 md:right-auto md:bottom-20 md:w-[420px] md:max-h-[calc(100vh-160px)] md:rounded-[28px] z-30 bg-white/95 backdrop-blur-xl border border-[#DDE7E2] shadow-[0_16px_48px_rgba(4,38,28,0.12)] overflow-hidden flex flex-col transition-all duration-300`}
+            >
               {selectedFactory ? (
                 <FactoryDetailPanel
                   factory={selectedFactory}
@@ -252,8 +251,8 @@ export default function Home() {
                 />
               ) : (
                 <>
-                  {/* Sheet Grabber — draggable handle */}
-                  <div data-sheet-handle className="pt-2.5 pb-1 bg-transparent shrink-0 cursor-grab active:cursor-grabbing touch-none">
+                  {/* Sheet Grabber */}
+                  <div className="pt-2.5 pb-1 bg-transparent shrink-0">
                     <div className="apple-sheet-handle" />
                   </div>
 
@@ -298,7 +297,8 @@ export default function Home() {
                   </div>
                 </>
               )}
-          </BottomSheet>
+            </aside>
+          )}
         </>
       )}
 
