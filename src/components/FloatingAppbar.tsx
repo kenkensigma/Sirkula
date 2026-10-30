@@ -94,7 +94,7 @@ export const FloatingAppbar: React.FC<FloatingAppbarProps> = ({
               {/* Filter toggle button */}
               <button
                 onClick={() => setShowFilters((p) => !p)}
-                className={`apple-press hidden sm:flex items-center gap-1 px-2.5 py-1.5 min-h-[36px] rounded-xl border transition-all focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2 ${
+                className={`apple-press flex items-center gap-1 px-2.5 py-1.5 min-h-[36px] rounded-xl border transition-all focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2 ${
                   showFilters
                     ? "bg-[#0A4D3C] text-white border-[#0A4D3C]"
                     : "bg-white hover:bg-[#F2F7F4] text-[#04261C] border-[#DDE7E2]"
