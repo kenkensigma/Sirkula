@@ -287,7 +287,7 @@ export default function Home() {
             {!isFactoryListOpen && (
               <button
                 onClick={openPanel}
-                className="apple-press absolute bottom-20 left-4 z-50 safari-stack-fix bg-white/95 backdrop-blur-md border border-[#DDE7E2] text-[#04261C] px-4 py-2.5 rounded-full shadow-[0_4px_16px_rgba(4,38,28,0.1)] text-xs font-bold flex items-center gap-2 hover:bg-[#F2F7F4] focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
+                className="apple-press absolute bottom-20 left-4 z-50 safari-stack-fix bg-white/95 backdrop-blur-md border border-[#DDE7E2] text-[#04261C] px-4 py-2.5 rounded-full shadow-[0_4px_16px_rgba(4,38,28,0.1)] text-xs font-bold flex items-center gap-2 hover:bg-[#F2F7F4] focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2 hidden sm:flex"
               >
                 <Layers className="w-4 h-4 text-[#0A4D3C]" />
                 <span>{selectedFactory ? selectedFactory.name : `Pabrik (${filteredFactories.length})`}</span>
