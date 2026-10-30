@@ -202,7 +202,7 @@ export default function Home() {
 
             {/* Location Permission Notification on Map */}
             {!isLocationGranted && (
-              <div className="absolute top-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-20 bg-white/95 backdrop-blur-md border border-[#DDE7E2] rounded-2xl p-4 shadow-[0_8px_30px_rgba(4,38,28,0.12)] animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="absolute top-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-20 bg-white/95 backdrop-blur-md border border-[#DDE7E2] rounded-2xl p-4 shadow-[0_8px_30px_rgba(4,38,28,0.12)] animate-in fade-in slide-in-from-top-2 duration-300 hidden sm:block">
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 rounded-xl bg-[#F2F7F4] border border-[#DDE7E2] flex items-center justify-center shrink-0">
                     <Navigation className="w-5 h-5 text-[#0A4D3C]" />
