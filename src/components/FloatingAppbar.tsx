@@ -51,7 +51,7 @@ export const FloatingAppbar: React.FC<FloatingAppbarProps> = ({
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 pointer-events-none">
+    <header className="fixed top-0 left-0 right-0 z-10 pointer-events-none safari-stack-fix">
       <div className="pointer-events-auto mx-3 mt-3 sm:mx-5 sm:mt-4 max-w-2xl lg:max-w-3xl xl:mx-auto">
         {/* Apple Dynamic Island Floating Card */}
         <div className="apple-glass rounded-2xl sm:rounded-[22px] px-3 py-2 sm:px-4 transition-all duration-300">
