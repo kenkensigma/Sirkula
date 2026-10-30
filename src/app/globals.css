@@ -197,6 +197,12 @@ input:-webkit-autofill:active {
   }
 }
 
+/* Safari stacking fix for backdrop-filter elements */
+.safari-stack-fix {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
 /* Accessibility (§14) */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
