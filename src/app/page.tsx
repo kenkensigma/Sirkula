@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect, useCallback } from "react";
+import React, { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { FloatingAppbar } from "@/components/FloatingAppbar";
 import { FactoryMap } from "@/components/Map";
 import { FactoryCard } from "@/components/FactoryCard";
@@ -24,6 +24,8 @@ import {
   Leaf,
   RefreshCw,
   Loader2,
+  Navigation,
+  Layers,
 } from "lucide-react";
 
 export default function Home() {
@@ -35,7 +37,65 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<NavTab>("map");
   
   // State for the DOM panel, toggled from the Floating Appbar
-  const [isFactoryListOpen, setIsFactoryListOpen] = useState<boolean>(false);
+  const [isFactoryListOpen, setIsFactoryListOpen] = useState(false);
+  const [shouldRenderPanel, setShouldRenderPanel] = useState(false);
+  const isPanelClosingRef = useRef(false);
+  const touchStartYRef = useRef<number | null>(null);
+  const [dragOffset, setDragOffset] = useState(0);
+
+  const openPanel = useCallback(() => {
+    setShouldRenderPanel(true);
+    isPanelClosingRef.current = false;
+    setDragOffset(0);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (!isPanelClosingRef.current) {
+          setIsFactoryListOpen(true);
+        }
+      });
+    });
+  }, []);
+
+  const closePanel = useCallback(() => {
+    isPanelClosingRef.current = true;
+    setIsFactoryListOpen(false);
+    setDragOffset(0);
+  }, []);
+
+  const handlePanelTransitionEnd = useCallback((e: React.TransitionEvent<HTMLDivElement>) => {
+    if (e.propertyName === "transform" && isPanelClosingRef.current) {
+      setShouldRenderPanel(false);
+      isPanelClosingRef.current = false;
+    }
+  }, []);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (!isFactoryListOpen) return;
+    touchStartYRef.current = e.touches[0].clientY;
+  }, [isFactoryListOpen]);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!isFactoryListOpen || touchStartYRef.current === null) return;
+    const currentY = e.touches[0].clientY;
+    const delta = currentY - touchStartYRef.current;
+    if (delta > 0) {
+      setDragOffset(delta);
+    }
+  }, [isFactoryListOpen]);
+
+  const handleTouchEnd = useCallback(() => {
+    if (!isFactoryListOpen) return;
+    touchStartYRef.current = null;
+    if (dragOffset > 100) {
+      closePanel();
+    } else {
+      setDragOffset(0);
+    }
+  }, [isFactoryListOpen, dragOffset, closePanel]);
+
+  // Location permission state
+  const [isLocationGranted, setIsLocationGranted] = useState<boolean>(false);
+  const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
 
   // Order & Escrow state
   const [orderModalFactory, setOrderModalFactory] = useState<FactoryLocation | null>(null);
@@ -58,12 +118,41 @@ export default function Home() {
   // Authentication gate for transactions & sensitive actions
   const { requireAuth, isAuthModalOpen, closeAuthModal, authModalActionDescription } = useAuth();
 
+  const effectiveUserLocation = isLocationGranted && userLocation
+    ? userLocation
+    : USER_FARMER_LOCATION;
+
+  const handleRequestLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Browser Anda tidak mendukung lokasi.");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserLocation({ latitude: pos.coords.latitude, longitude: pos.coords.longitude });
+        setIsLocationGranted(true);
+      },
+      () => {
+        setUserLocation(null);
+        setIsLocationGranted(false);
+      }
+    );
+  };
+
+  const handleFilterChange = (filter: "all" | "near" | "green" | "yellow") => {
+    if (filter === "near" && !isLocationGranted) {
+      handleRequestLocation();
+      return;
+    }
+    setActiveFilter(filter);
+  };
+
   // 1. Fetch live batches from backend GET /api/v1/batches
   const fetchBatches = useCallback(async () => {
     setIsLoadingBatches(true);
     try {
-      const lat = USER_FARMER_LOCATION.latitude;
-      const lng = USER_FARMER_LOCATION.longitude;
+      const lat = effectiveUserLocation.latitude;
+      const lng = effectiveUserLocation.longitude;
       const res = await fetch(`/api/v1/batches?lat=${lat}&lng=${lng}&radius_km=15&status=available`);
 
       if (res.ok) {
@@ -126,7 +215,7 @@ export default function Home() {
     } finally {
       setIsLoadingBatches(false);
     }
-  }, []);
+  }, [effectiveUserLocation.latitude, effectiveUserLocation.longitude]);
 
   // 2. Fetch live transactions from backend GET /api/v1/transactions
   const fetchOrders = useCallback(async () => {
@@ -228,30 +317,22 @@ export default function Home() {
   const filteredFactories = useMemo(() => {
     return factories.filter((factory) => {
       const distance = calculateHaversineDistance(
-        { latitude: USER_FARMER_LOCATION.latitude, longitude: USER_FARMER_LOCATION.longitude },
+        { latitude: effectiveUserLocation.latitude, longitude: effectiveUserLocation.longitude },
         { latitude: factory.latitude, longitude: factory.longitude }
       );
 
-      // Must be within 15 km radius as required by SLA
-      if (distance > 15) return false;
-
-      if (activeFilter === "green") {
-        return factory.activeBatch.freshnessZone === "green";
-      }
-      if (activeFilter === "yellow") {
-        return factory.activeBatch.freshnessZone === "yellow";
-      }
-      if (activeFilter === "near") {
-        return distance <= 5;
-      }
+      if (activeFilter === "near" && distance > 15) return false;
+      if (activeFilter === "green" && factory.activeBatch.freshnessZone !== "green") return false;
+      if (activeFilter === "yellow" && factory.activeBatch.freshnessZone !== "yellow") return false;
+      if (factory.activeBatch.freshnessZone === "expired") return false;
       return true;
     });
-  }, [factories, activeFilter]);
+  }, [factories, activeFilter, effectiveUserLocation]);
 
   // Aggregate statistics
   const totalKgAvailable = useMemo(() => {
     return filteredFactories.reduce(
-      (acc, f) => acc + f.activeBatch.availableSacks * f.activeBatch.weightPerSackKg,
+      (sum, f) => sum + f.activeBatch.availableSacks * f.activeBatch.weightPerSackKg,
       0
     );
   }, [filteredFactories]);
@@ -304,10 +385,16 @@ export default function Home() {
       {/* Apple Dynamic Island Floating Appbar */}
       <FloatingAppbar
         isFactoryListOpen={isFactoryListOpen}
-        onToggleFactoryList={() => setIsFactoryListOpen((prev) => !prev)}
+        onToggleFactoryList={() => {
+          if (isFactoryListOpen) {
+            closePanel();
+          } else {
+            openPanel();
+          }
+        }}
         factoriesCount={filteredFactories.length}
         activeFilter={activeFilter}
-        onFilterChange={setActiveFilter}
+        onFilterChange={handleFilterChange}
         onOpenSDGModal={() => setIsSDGModalOpen(true)}
         isRadiusCircleVisible={isRadiusCircleVisible}
         onToggleRadiusCircle={() => setIsRadiusCircleVisible((prev) => !prev)}
@@ -315,6 +402,8 @@ export default function Home() {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         ordersCount={orders.filter((o) => o.status !== "DELIVERED_SETTLED").length}
+        isLocationGranted={isLocationGranted}
+        onRequestLocation={handleRequestLocation}
       />
 
       {/* Tab: Radar Peta */}
@@ -327,79 +416,142 @@ export default function Home() {
                 selectedFactory={selectedFactory}
                 onSelectFactory={(fac) => {
                   setSelectedFactory(fac);
-                  setIsFactoryListOpen(true);
+                  openPanel();
                 }}
                 onOrderFactory={handleOrderFactory}
                 isRadiusCircleVisible={isRadiusCircleVisible}
+                isLocationGranted={isLocationGranted}
+                userLocation={effectiveUserLocation}
               />
             </div>
 
             {/* Apple Maps Style GPS Re-Center Floating Button */}
             <button
               onClick={() => setSelectedFactory(null)}
-              className="apple-press absolute bottom-20 right-4 z-20 w-11 h-11 rounded-full bg-white/95 backdrop-blur-md border border-[#DDE7E2] flex items-center justify-center text-[#04261C] shadow-[0_4px_16px_rgba(4,38,28,0.1)] hover:bg-[#F2F7F4] focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
+              className="apple-press absolute bottom-20 right-4 z-50 safari-stack-fix w-11 h-11 rounded-full bg-white/95 backdrop-blur-md border border-[#DDE7E2] flex items-center justify-center text-[#04261C] shadow-[0_4px_16px_rgba(4,38,28,0.1)] hover:bg-[#F2F7F4] focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2 hidden sm:flex"
               title="Pusatkan Radar ke GPS"
             >
               <span className="w-2.5 h-2.5 rounded-full bg-[#0A4D3C]" />
             </button>
+
+            {/* Location Permission Notification on Map */}
+            {!isLocationGranted && (
+              <div className="absolute top-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-50 safari-stack-fix bg-white/95 backdrop-blur-md border border-[#DDE7E2] rounded-2xl p-4 shadow-[0_8px_30px_rgba(4,38,28,0.12)] animate-in fade-in slide-in-from-top-2 duration-300 hidden sm:block">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-[#F2F7F4] border border-[#DDE7E2] flex items-center justify-center shrink-0">
+                    <Navigation className="w-5 h-5 text-[#0A4D3C]" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-sm font-bold text-[#04261C]">Izinkan Akses Lokasi</h4>
+                    <p className="text-xs text-[#4A6359] mt-0.5 leading-relaxed">
+                      Aktifkan lokasi perangkat untuk melihat pabrik terdekat dan menghitung jarak akurat.
+                    </p>
+                    <button
+                      onClick={handleRequestLocation}
+                      className="apple-press mt-2.5 min-h-[36px] px-4 rounded-xl bg-[#0A4D3C] text-white text-xs font-bold hover:bg-[#063125] transition-colors focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
+                    >
+                      Izinkan Lokasi
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Reopen Sheet Capsule Button */}
+            {!isFactoryListOpen && (
+              <button
+                onClick={openPanel}
+                className="apple-press absolute bottom-20 left-4 z-50 safari-stack-fix bg-white/95 backdrop-blur-md border border-[#DDE7E2] text-[#04261C] px-4 py-2.5 rounded-full shadow-[0_4px_16px_rgba(4,38,28,0.1)] text-xs font-bold flex items-center gap-2 hover:bg-[#F2F7F4] focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2 hidden sm:flex"
+              >
+                <Layers className="w-4 h-4 text-[#0A4D3C]" />
+                <span>{selectedFactory ? selectedFactory.name : `Pabrik (${filteredFactories.length})`}</span>
+              </button>
+            )}
           </main>
 
-          {/* Bottom Sheet List Panel */}
-          {isFactoryListOpen && (
+          {/* Sheet: Factory List / Detail Panel (Placed outside main to prevent overflow clipping) */}
+          {shouldRenderPanel && (
             <aside
-              className="absolute left-0 right-0 sm:left-4 sm:right-auto sm:top-20 sm:bottom-20 sm:w-96 bottom-16 z-30 bg-white/95 backdrop-blur-xl border border-[#DDE7E2] rounded-t-[32px] sm:rounded-[32px] shadow-[0_8px_32px_rgba(4,38,28,0.12)] flex flex-col max-h-[65vh] sm:max-h-none overflow-hidden animate-in slide-in-from-bottom sm:slide-in-from-left duration-200"
-              aria-label="Daftar Pabrik Tahu Terdekat"
+              aria-label="Panel Pabrik"
+              onTransitionEnd={handlePanelTransitionEnd}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              className={`fixed inset-x-0 bottom-14 ${selectedFactory ? 'max-h-[45vh]' : 'max-h-[72vh]'} rounded-t-[32px] md:top-20 md:left-6 md:right-auto md:bottom-20 md:w-[420px] md:max-h-[calc(100vh-160px)] md:rounded-[28px] z-30 bg-white/95 backdrop-blur-xl border border-[#DDE7E2] shadow-[0_16px_48px_rgba(4,38,28,0.12)] overflow-hidden flex flex-col transition-transform duration-300 ease-out ${dragOffset > 0 ? 'transition-none' : ''} ${
+                isFactoryListOpen
+                  ? 'translate-y-0 opacity-100 pointer-events-auto md:translate-x-0 md:opacity-100 md:pointer-events-auto'
+                  : 'translate-y-full opacity-0 pointer-events-none md:-translate-x-full md:opacity-0 md:pointer-events-none'
+              }`}
+              style={dragOffset > 0 ? { transform: `translateY(${dragOffset}px)` } : undefined}
             >
-              <div className="p-4 border-b border-[#DDE7E2] flex items-center justify-between shrink-0 bg-white/90">
-                <div className="flex items-center gap-2">
-                  <h3 className="font-extrabold text-[#04261C] text-sm">
-                    Pabrik Terdekat ({filteredFactories.length})
-                  </h3>
-                  {isLoadingBatches && (
-                    <Loader2 className="w-3.5 h-3.5 text-[#0A4D3C] animate-spin" />
-                  )}
-                </div>
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={fetchBatches}
-                    className="p-1.5 rounded-full text-[#4A6359] hover:bg-[#F4F8F5] transition-colors"
-                    title="Segarkan data batch"
-                    aria-label="Segarkan data"
-                  >
-                    <RefreshCw className={`w-3.5 h-3.5 ${isLoadingBatches ? "animate-spin text-[#0A4D3C]" : ""}`} />
-                  </button>
-                  <button
-                    onClick={() => setIsFactoryListOpen(false)}
-                    className="apple-press p-1.5 rounded-full text-[#4A6359] hover:bg-[#F4F8F5] transition-colors"
-                    aria-label="Tutup panel daftar"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
+              {selectedFactory ? (
+                <FactoryDetailPanel
+                  factory={selectedFactory}
+                  onBack={() => setSelectedFactory(null)}
+                  onClose={closePanel}
+                  onOrder={handleOrderFactory}
+                  userLocation={effectiveUserLocation}
+                />
+              ) : (
+                <>
+                  {/* Sheet Grabber */}
+                  <div className="pt-2.5 pb-1 bg-transparent shrink-0">
+                    <div className="apple-sheet-handle" />
+                  </div>
 
-              <div className="p-3 space-y-2.5 overflow-y-auto flex-1 bg-[#F4F8F5]/60">
-                {filteredFactories.map((fac) => (
-                  <FactoryCard
-                    key={fac.id}
-                    factory={fac}
-                    isSelected={selectedFactory?.id === fac.id}
-                    onSelect={() => setSelectedFactory(fac)}
-                    onOrder={handleOrderFactory}
-                  />
-                ))}
-              </div>
+                  {/* Panel Header */}
+                  <div className="p-3.5 px-5 flex items-center justify-between shrink-0 border-b border-[#E8F0EC] bg-[#F7FAF8]">
+                    <div>
+                      <h3 className="font-bold text-base text-[#04261C] tracking-tight">
+                        Pabrik Ampas Tahu
+                      </h3>
+                      <p className="text-xs text-[#4A6359] font-medium mt-0.5">
+                        {filteredFactories.length} titik produsen, radius 15 km
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={fetchBatches}
+                        disabled={isLoadingBatches}
+                        className="apple-press p-2 min-h-[40px] min-w-[40px] rounded-full bg-[#E8F0EC] hover:bg-[#DDE7E2] text-[#04261C] transition-colors flex items-center justify-center focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
+                        title="Segarkan data batch"
+                        aria-label="Segarkan data"
+                      >
+                        <RefreshCw className={`w-4 h-4 ${isLoadingBatches ? "animate-spin text-[#0A4D3C]" : ""}`} />
+                      </button>
+                      <button
+                        onClick={closePanel}
+                        className="apple-press p-2 min-h-[40px] min-w-[40px] rounded-full bg-[#E8F0EC] hover:bg-[#DDE7E2] text-[#04261C] transition-colors flex items-center justify-center focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
+                        title="Tutup Panel"
+                        aria-label="Tutup Panel"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Panel List */}
+                  <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2.5">
+                    {filteredFactories.length === 0 ? (
+                      <div className="p-10 text-center text-[#4A6359] text-sm">
+                        Tidak ada pabrik yang sesuai filter radar.
+                      </div>
+                    ) : (
+                      filteredFactories.map((factory) => (
+                        <FactoryCard
+                          key={factory.id}
+                          factory={factory}
+                          isSelected={false}
+                          onSelect={(fac) => setSelectedFactory(fac)}
+                          onOrder={handleOrderFactory}
+                          userLocation={effectiveUserLocation}
+                        />
+                      ))
+                    )}
+                  </div>
+                </>
+              )}
             </aside>
-          )}
-
-          {/* Factory Detail Drawer */}
-          {selectedFactory && (
-            <FactoryDetailPanel
-              factory={selectedFactory}
-              onBack={() => setSelectedFactory(null)}
-              onClose={() => setSelectedFactory(null)}
-              onOrder={handleOrderFactory}
-            />
           )}
         </>
       )}
@@ -435,9 +587,10 @@ export default function Home() {
                 onSelect={() => {
                   setSelectedFactory(fac);
                   setActiveTab("map");
-                  setIsFactoryListOpen(true);
+                  openPanel();
                 }}
                 onOrder={handleOrderFactory}
+                userLocation={effectiveUserLocation}
               />
             ))}
           </div>
@@ -587,6 +740,7 @@ export default function Home() {
         isOpen={!!orderModalFactory}
         onClose={() => setOrderModalFactory(null)}
         onOrderSuccess={handleOrderSuccess}
+        userLocation={effectiveUserLocation}
       />
 
       <EscrowVerificationModal

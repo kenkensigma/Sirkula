@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { FactoryLocation, USER_FARMER_LOCATION } from "@/data/mockFactories";
+import { FactoryLocation } from "@/data/mockFactories";
 import { calculateHaversineDistance, formatDistanceDisplay } from "@/lib/geo/haversine";
 import {
   ArrowLeft,
@@ -28,6 +28,7 @@ interface FactoryDetailPanelProps {
   onBack: () => void;
   onClose: () => void;
   onOrder: (factory: FactoryLocation) => void;
+  userLocation: { latitude: number; longitude: number };
 }
 
 const FRESHNESS_WINDOW_SECONDS = 12 * 3600;
@@ -39,11 +40,12 @@ export const FactoryDetailPanel: React.FC<FactoryDetailPanelProps> = ({
   onBack,
   onClose,
   onOrder,
+  userLocation,
 }) => {
   const [copied, setCopied] = useState(false);
 
   const distance = calculateHaversineDistance(
-    { latitude: USER_FARMER_LOCATION.latitude, longitude: USER_FARMER_LOCATION.longitude },
+    { latitude: userLocation.latitude, longitude: userLocation.longitude },
     { latitude: factory.latitude, longitude: factory.longitude }
   );
   const formattedDistance = formatDistanceDisplay(distance);
@@ -74,7 +76,7 @@ export const FactoryDetailPanel: React.FC<FactoryDetailPanelProps> = ({
   const priceLabel = `Rp ${factory.activeBatch.pricePerSackIdr.toLocaleString("id-ID")}`;
 
   const handleOpenGoogleMapsRoute = () => {
-    const url = `https://www.google.com/maps/dir/?api=1&origin=${USER_FARMER_LOCATION.latitude},${USER_FARMER_LOCATION.longitude}&destination=${factory.latitude},${factory.longitude}`;
+    const url = `https://www.google.com/maps/dir/?api=1&origin=${userLocation.latitude},${userLocation.longitude}&destination=${factory.latitude},${factory.longitude}`;
     window.open(url, "_blank");
   };
 

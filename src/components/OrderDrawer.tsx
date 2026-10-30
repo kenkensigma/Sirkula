@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { FactoryLocation, USER_FARMER_LOCATION } from "@/data/mockFactories";
+import { FactoryLocation } from "@/data/mockFactories";
 import { calculateHaversineDistance, formatDistanceDisplay } from "@/lib/geo/haversine";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -52,6 +52,7 @@ interface OrderDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   onOrderSuccess: (order: ActiveOrder) => void;
+  userLocation: { latitude: number; longitude: number };
 }
 
 // 0 = Keranjang / Konfigurasi Pesanan (Cart)
@@ -79,6 +80,7 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
   isOpen,
   onClose,
   onOrderSuccess,
+  userLocation,
 }) => {
   const { user } = useAuth();
 
@@ -139,7 +141,7 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
         setFullName(user?.name || "Pak Wayan Gunawan");
         setEmail(user?.email || "wayan.ternak@gmail.com");
         setPhone(user?.phone || "0812-3456-7890");
-        setAddressLine1(USER_FARMER_LOCATION.address);
+        setAddressLine1("Lokasi GPS terdeteksi");
         setAddressLine2("Kandang Sapi Mandiri Banjar");
       }
     } catch {
@@ -165,10 +167,10 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
   const distance = useMemo(() => {
     if (!factory) return 2.4;
     return calculateHaversineDistance(
-      { latitude: USER_FARMER_LOCATION.latitude, longitude: USER_FARMER_LOCATION.longitude },
+      { latitude: userLocation.latitude, longitude: userLocation.longitude },
       { latitude: factory.latitude, longitude: factory.longitude }
     );
-  }, [factory]);
+  }, [factory, userLocation]);
 
   const formattedDistance = formatDistanceDisplay(distance);
   const pricePerSack = factory?.activeBatch.pricePerSackIdr || 25000;
@@ -1264,7 +1266,7 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
 
               {/* Right Column: Order Summary Card matching reference photo */}
               <div className="lg:col-span-5">
-                <div className="bg-white rounded-3xl border border-[#DDE7E2] p-5 sm:p-6 shadow-[0_4px_20px_rgba(4,38,28,0.06)] sticky top-4 space-y-5">
+                <div className="bg-[#F2F7F4] rounded-3xl border border-[#DDE7E2] p-5 sm:p-6 shadow-[0_4px_20px_rgba(4,38,28,0.06)] sticky top-4 space-y-5">
                   
                   {/* Title */}
                   <h3 className="font-extrabold text-[#04261C] text-lg tracking-tight">

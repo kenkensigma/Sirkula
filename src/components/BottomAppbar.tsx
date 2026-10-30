@@ -14,8 +14,8 @@ interface BottomAppbarProps {
 
 const tabs: { key: NavTab; label: string; Icon: typeof Map }[] = [
   { key: "map", label: "Peta", Icon: Map },
-  { key: "catalog", label: "Katalog", Icon: Layers },
-  { key: "escrow", label: "Pesanan", Icon: ShieldCheck },
+  { key: "catalog", label: "Pabrik", Icon: Layers },
+  { key: "escrow", label: "Escrow", Icon: ShieldCheck },
   { key: "sdg", label: "Dampak SDG", Icon: Leaf },
 ];
 
@@ -33,7 +33,7 @@ export const BottomAppbar: React.FC<BottomAppbarProps> = ({
             <button
               key={key}
               onClick={() => onTabChange(key)}
-              className="apple-press flex flex-col items-center justify-center gap-1 py-1.5 px-3 min-h-[48px] min-w-[56px] rounded-2xl relative transition-all group focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
+              className="apple-press flex flex-col items-center justify-center gap-0.5 py-1.5 px-2 min-h-[44px] min-w-[56px] rounded-2xl relative transition-all group focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
               role="tab"
               aria-selected={isActive}
               aria-label={label}
@@ -54,7 +54,7 @@ export const BottomAppbar: React.FC<BottomAppbarProps> = ({
                 )}
               </div>
               <span
-                className={`text-xs tracking-tight transition-colors ${
+                className={`text-[11px] tracking-tight transition-colors ${
                   isActive
                     ? "font-bold text-[#0A4D3C]"
                     : "font-medium text-[#4A6359] group-hover:text-[#04261C]"
@@ -72,7 +72,7 @@ export const BottomAppbar: React.FC<BottomAppbarProps> = ({
         {/* Dedicated 5th tab: Direct Link to Dashboard */}
         <Link
           href="/dashboard"
-          className="apple-press flex flex-col items-center justify-center gap-1 py-1.5 px-3 min-h-[48px] min-w-[56px] rounded-2xl relative transition-all group focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
+          className="apple-press flex flex-col items-center justify-center gap-0.5 py-1.5 px-2 min-h-[44px] min-w-[56px] rounded-2xl relative transition-all group focus-visible:ring-2 focus-visible:ring-[#0A4D3C] focus-visible:ring-offset-2"
           title="Buka Dashboard Sirkula"
           aria-label="Dashboard"
         >
@@ -82,7 +82,7 @@ export const BottomAppbar: React.FC<BottomAppbarProps> = ({
               strokeWidth={2}
             />
           </div>
-          <span className="text-xs tracking-tight font-bold text-[#0A4D3C]">
+          <span className="text-[11px] tracking-tight font-bold text-[#0A4D3C]">
             Dashboard
           </span>
         </Link>
